@@ -52,12 +52,12 @@ public class ManagerAmbulance extends OSPABA.Manager
 	{
 		switch (message.code())
 		{
-		case Mc.requestAmbulance:
-			processRequestAmbulance(message);
-		break;
-
 		case Mc.releaseAmbulance:
 			processReleaseAmbulance(message);
+		break;
+
+		case Mc.requestAmbulance:
+			processRequestAmbulance(message);
 		break;
 
 		default:

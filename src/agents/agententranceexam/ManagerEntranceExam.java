@@ -35,7 +35,7 @@ public class ManagerEntranceExam extends OSPABA.Manager
 	}
 
 	//meta! sender="AgentHospital", id="72", type="Response"
-	public void processRequestPersonell(MessageForm message)
+	public void processRequestPersonnel(MessageForm message)
 	{
 	}
 
@@ -66,16 +66,16 @@ public class ManagerEntranceExam extends OSPABA.Manager
 			processRequestAmbulance(message);
 		break;
 
-		case Mc.finish:
-			processFinish(message);
-		break;
-
 		case Mc.entranceExamination:
 			processEntranceExamination(message);
 		break;
 
-		case Mc.requestPersonell:
-			processRequestPersonell(message);
+		case Mc.requestPersonnel:
+			processRequestPersonnel(message);
+		break;
+
+		case Mc.finish:
+			processFinish(message);
 		break;
 
 		default:

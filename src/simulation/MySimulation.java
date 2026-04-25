@@ -8,7 +8,6 @@ import agents.agentboss.*;
 import agents.agententranceexam.*;
 import agents.agenthospital.*;
 import agents.agentpersonnel.*;
-
 import java.util.Random;
 
 public class MySimulation extends OSPABA.Simulation

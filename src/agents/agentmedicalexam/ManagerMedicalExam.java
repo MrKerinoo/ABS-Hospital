@@ -30,7 +30,7 @@ public class ManagerMedicalExam extends OSPABA.Manager
 	}
 
 	//meta! sender="AgentHospital", id="78", type="Response"
-	public void processRequestPersonell(MessageForm message)
+	public void processRequestPersonnel(MessageForm message)
 	{
 	}
 
@@ -70,8 +70,8 @@ public class ManagerMedicalExam extends OSPABA.Manager
 			processFinish(message);
 		break;
 
-		case Mc.requestPersonell:
-			processRequestPersonell(message);
+		case Mc.requestPersonnel:
+			processRequestPersonnel(message);
 		break;
 
 		case Mc.medicalExamination:

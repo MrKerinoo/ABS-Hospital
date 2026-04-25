@@ -57,10 +57,6 @@ public class ManagerEnviroment extends OSPABA.Manager
 	{
 		switch (message.code())
 		{
-		case Mc.patientExit:
-			processPatientExit(message);
-		break;
-
 		case Mc.finish:
 			switch (message.sender().id())
 			{
@@ -72,6 +68,10 @@ public class ManagerEnviroment extends OSPABA.Manager
 				processFinishSchedulerCar(message);
 			break;
 			}
+		break;
+
+		case Mc.patientExit:
+			processPatientExit(message);
 		break;
 
 		default:

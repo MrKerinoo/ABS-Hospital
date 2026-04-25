@@ -25,12 +25,12 @@ public class ManagerPersonnel extends OSPABA.Manager
 	}
 
 	//meta! sender="AgentHospital", id="90", type="Notice"
-	public void processReleasePersonell(MessageForm message)
+	public void processReleasePersonnel(MessageForm message)
 	{
 	}
 
 	//meta! sender="AgentHospital", id="77", type="Request"
-	public void processRequestPersonell(MessageForm message)
+	public void processRequestPersonnel(MessageForm message)
 	{
 	}
 
@@ -57,12 +57,12 @@ public class ManagerPersonnel extends OSPABA.Manager
 	{
 		switch (message.code())
 		{
-		case Mc.releasePersonell:
-			processReleasePersonell(message);
+		case Mc.requestPersonnel:
+			processRequestPersonnel(message);
 		break;
 
-		case Mc.requestPersonell:
-			processRequestPersonell(message);
+		case Mc.releasePersonnel:
+			processReleasePersonnel(message);
 		break;
 
 		case Mc.finish:

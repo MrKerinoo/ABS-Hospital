@@ -25,8 +25,8 @@ public class AgentPersonnel extends OSPABA.Agent
 	{
 		new ManagerPersonnel(Id.managerPersonnel, mySim(), this);
 		new ProcessMovePersonnel(Id.processMovePersonnel, mySim(), this);
-		addOwnMessage(Mc.releasePersonell);
-		addOwnMessage(Mc.requestPersonell);
+		addOwnMessage(Mc.releasePersonnel);
+		addOwnMessage(Mc.requestPersonnel);
 	}
 	//meta! tag="end"
 }
