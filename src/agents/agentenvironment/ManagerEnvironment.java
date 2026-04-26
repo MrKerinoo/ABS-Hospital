@@ -27,6 +27,8 @@ public class ManagerEnvironment extends OSPABA.Manager
 	//meta! sender="AgentBoss", id="57", type="Notice"
 	public void processPatientExit(MessageForm message)
 	{
+        // UPDATE STATISTICS
+
 	}
 
 	//meta! sender="SchedulerWalk", id="9", type="Finish"

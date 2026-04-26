@@ -1,10 +1,11 @@
+import gui.MainFrame;
 import simulation.MySimulation;
 
 public class Main {
 
     public static void main(String[] args) {
-        MySimulation sim = new MySimulation();
+        MySimulation core = new MySimulation();
 
-        sim.simulate(1, 2_419_200);
+        javax.swing.SwingUtilities.invokeLater(() -> new MainFrame(core));
     }
 }

@@ -2,11 +2,18 @@ package agents.agenthospital;
 
 import OSPABA.*;
 import agents.agenthospital.continualassistants.*;
+import entities.Patient;
 import simulation.*;
+
+import java.util.PriorityQueue;
 
 //meta! id="13"
 public class AgentHospital extends OSPABA.Agent
 {
+    private PriorityQueue<Patient> entranceQueue;
+    private PriorityQueue<Patient> medicalTypeAQueue;
+    private PriorityQueue<Patient> medicalTypeBQueue;
+
 	public AgentHospital(int id, Simulation mySim, Agent parent)
 	{
 		super(id, mySim, parent);
