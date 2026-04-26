@@ -62,20 +62,20 @@ public class ManagerEntranceExam extends OSPABA.Manager
 	{
 		switch (message.code())
 		{
-		case Mc.requestAmbulance:
-			processRequestAmbulance(message);
-		break;
-
-		case Mc.entranceExamination:
-			processEntranceExamination(message);
+		case Mc.finish:
+			processFinish(message);
 		break;
 
 		case Mc.requestPersonnel:
 			processRequestPersonnel(message);
 		break;
 
-		case Mc.finish:
-			processFinish(message);
+		case Mc.entranceExamination:
+			processEntranceExamination(message);
+		break;
+
+		case Mc.requestAmbulance:
+			processRequestAmbulance(message);
 		break;
 
 		default:

@@ -20,7 +20,6 @@ public class TimeStatistics extends Statistics {
         if (duration > 0 && currentTime > warmupTime) {
             double effectiveDuration = currentTime - Math.max(this.lastChangeTime, warmupTime);
             if (effectiveDuration > 0) {
-                // Tu voláme tvoju pôvodnú metódu zo Statistics
                 super.registerValue(this.lastValue, effectiveDuration);
             }
         }

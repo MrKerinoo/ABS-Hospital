@@ -62,20 +62,20 @@ public class ManagerMedicalExam extends OSPABA.Manager
 	{
 		switch (message.code())
 		{
-		case Mc.requestAmbulance:
-			processRequestAmbulance(message);
-		break;
-
-		case Mc.finish:
-			processFinish(message);
+		case Mc.medicalExamination:
+			processMedicalExamination(message);
 		break;
 
 		case Mc.requestPersonnel:
 			processRequestPersonnel(message);
 		break;
 
-		case Mc.medicalExamination:
-			processMedicalExamination(message);
+		case Mc.requestAmbulance:
+			processRequestAmbulance(message);
+		break;
+
+		case Mc.finish:
+			processFinish(message);
 		break;
 
 		default:

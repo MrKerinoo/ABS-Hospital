@@ -12,6 +12,7 @@ public class Mc extends OSPABA.IdList
 	public static final int releaseResources = 1025;
 	public static final int releasePersonnel = 1030;
 	public static final int releaseAmbulance = 1031;
+	public static final int noticeInit = 1032;
 	public static final int patientArrival = 1002;
 	public static final int patientExit = 1003;
 	public static final int patientCare = 1004;

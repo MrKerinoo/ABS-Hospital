@@ -1,13 +1,15 @@
 package simulation;
 
 import OSPABA.*;
-import agents.agentenviroment.*;
 import agents.agentmedicalexam.*;
 import agents.agentambulance.*;
+import agents.agentenvironment.*;
 import agents.agentboss.*;
 import agents.agententranceexam.*;
 import agents.agenthospital.*;
 import agents.agentpersonnel.*;
+import statistics.DiscreteStatistics;
+
 import java.util.Random;
 
 public class MySimulation extends OSPABA.Simulation
@@ -16,16 +18,25 @@ public class MySimulation extends OSPABA.Simulation
 
     // GLOBAL STATISTICS
 
+    private DiscreteStatistics patientsIn;
+
 	public MySimulation()
 	{
 		init();
 	}
+
+    public Random getSeedRandom() {
+        return this.random;
+    }
 
 	@Override
 	public void prepareSimulation()
 	{
 		super.prepareSimulation();
 		// Create global statistcis
+        patientsIn = new DiscreteStatistics();
+
+        this.random = new Random();
 	}
 
 	@Override
@@ -33,11 +44,13 @@ public class MySimulation extends OSPABA.Simulation
 	{
 		super.prepareReplication();
 		// Reset entities, queues, local statistics, etc...
+        agentBoss().firstArrival();
 	}
 
 	@Override
 	public void replicationFinished()
 	{
+        patientsIn.add(agentEnvironment().getPatientsIn());
 		// Collect local statistics into global, update UI, etc...
 		super.replicationFinished();
 	}
@@ -53,7 +66,7 @@ public class MySimulation extends OSPABA.Simulation
 	private void init()
 	{
 		setAgentBoss(new AgentBoss(Id.agentBoss, this, null));
-		setAgentEnviroment(new AgentEnviroment(Id.agentEnviroment, this, agentBoss()));
+		setAgentEnvironment(new AgentEnvironment(Id.agentEnvironment, this, agentBoss()));
 		setAgentHospital(new AgentHospital(Id.agentHospital, this, agentBoss()));
 		setAgentPersonnel(new AgentPersonnel(Id.agentPersonnel, this, agentHospital()));
 		setAgentAmbulance(new AgentAmbulance(Id.agentAmbulance, this, agentHospital()));
@@ -69,13 +82,13 @@ public AgentBoss agentBoss()
 	public void setAgentBoss(AgentBoss agentBoss)
 	{_agentBoss = agentBoss; }
 
-	private AgentEnviroment _agentEnviroment;
+	private AgentEnvironment _agentEnvironment;
 
-public AgentEnviroment agentEnviroment()
-	{ return _agentEnviroment; }
+public AgentEnvironment agentEnvironment()
+	{ return _agentEnvironment; }
 
-	public void setAgentEnviroment(AgentEnviroment agentEnviroment)
-	{_agentEnviroment = agentEnviroment; }
+	public void setAgentEnvironment(AgentEnvironment agentEnvironment)
+	{_agentEnvironment = agentEnvironment; }
 
 	private AgentHospital _agentHospital;
 

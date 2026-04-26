@@ -57,16 +57,16 @@ public class ManagerPersonnel extends OSPABA.Manager
 	{
 		switch (message.code())
 		{
-		case Mc.requestPersonnel:
-			processRequestPersonnel(message);
-		break;
-
 		case Mc.releasePersonnel:
 			processReleasePersonnel(message);
 		break;
 
 		case Mc.finish:
 			processFinish(message);
+		break;
+
+		case Mc.requestPersonnel:
+			processRequestPersonnel(message);
 		break;
 
 		default:

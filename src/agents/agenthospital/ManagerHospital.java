@@ -102,36 +102,23 @@ public class ManagerHospital extends OSPABA.Manager
 	{
 		switch (message.code())
 		{
-		case Mc.requestPersonnel:
-			switch (message.sender().id())
-			{
-			case Id.agentPersonnel:
-				processRequestPersonnelAgentPersonnel(message);
-			break;
-
-			case Id.agentMedicalExam:
-				processRequestPersonnelAgentMedicalExam(message);
-			break;
-
-			case Id.agentEntranceExam:
-				processRequestPersonnelAgentEntranceExam(message);
-			break;
-			}
+		case Mc.patientCare:
+			processPatientCare(message);
 		break;
 
 		case Mc.requestAmbulance:
 			switch (message.sender().id())
 			{
+			case Id.agentAmbulance:
+				processRequestAmbulanceAgentAmbulance(message);
+			break;
+
 			case Id.agentMedicalExam:
 				processRequestAmbulanceAgentMedicalExam(message);
 			break;
 
 			case Id.agentEntranceExam:
 				processRequestAmbulanceAgentEntranceExam(message);
-			break;
-
-			case Id.agentAmbulance:
-				processRequestAmbulanceAgentAmbulance(message);
 			break;
 			}
 		break;
@@ -149,20 +136,33 @@ public class ManagerHospital extends OSPABA.Manager
 			}
 		break;
 
-		case Mc.patientCare:
-			processPatientCare(message);
-		break;
-
 		case Mc.finish:
 			processFinish(message);
 		break;
 
-		case Mc.entranceExamination:
-			processEntranceExamination(message);
-		break;
-
 		case Mc.medicalExamination:
 			processMedicalExamination(message);
+		break;
+
+		case Mc.requestPersonnel:
+			switch (message.sender().id())
+			{
+			case Id.agentMedicalExam:
+				processRequestPersonnelAgentMedicalExam(message);
+			break;
+
+			case Id.agentEntranceExam:
+				processRequestPersonnelAgentEntranceExam(message);
+			break;
+
+			case Id.agentPersonnel:
+				processRequestPersonnelAgentPersonnel(message);
+			break;
+			}
+		break;
+
+		case Mc.entranceExamination:
+			processEntranceExamination(message);
 		break;
 
 		default:

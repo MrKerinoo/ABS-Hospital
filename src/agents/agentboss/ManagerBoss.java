@@ -29,7 +29,7 @@ public class ManagerBoss extends OSPABA.Manager
 	{
 	}
 
-	//meta! sender="AgentEnviroment", id="56", type="Notice"
+	//meta! sender="AgentEnvironment", id="56", type="Notice"
 	public void processPatientArrival(MessageForm message)
 	{
 	}

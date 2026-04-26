@@ -27,4 +27,12 @@ public class AgentBoss extends OSPABA.Agent
 		addOwnMessage(Mc.patientArrival);
 	}
 	//meta! tag="end"
+
+    public void firstArrival() {
+        MyMessage message = new MyMessage(mySim());
+
+        message.setAddressee(mySim().findAgent(Id.agentEnvironment));
+        message.setCode(Mc.noticeInit);
+        myManager().notice(message);
+    }
 }
