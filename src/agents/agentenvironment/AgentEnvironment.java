@@ -1,9 +1,9 @@
 package agents.agentenvironment;
 
 import OSPABA.*;
-import generators.PatientGenerator;
 import simulation.*;
 import agents.agentenvironment.continualassistants.*;
+import generators.PatientGenerator;
 import generators.ErlangGenerator;
 import generators.ExponentialGenerator;
 import statistics.DiscreteStatistics;
@@ -49,8 +49,8 @@ public class AgentEnvironment extends OSPABA.Agent
 	private void init()
 	{
 		new ManagerEnvironment(Id.managerEnvironment, mySim(), this);
-		new SchedulerAmbulanceCar(Id.schedulerAmbulanceCar, mySim(), this);
 		new SchedulerWalk(Id.schedulerWalk, mySim(), this);
+		new SchedulerAmbulanceCar(Id.schedulerAmbulanceCar, mySim(), this);
 		addOwnMessage(Mc.patientExit);
 		addOwnMessage(Mc.noticeInit);
 	}

@@ -35,8 +35,13 @@ public class ManagerBoss extends OSPABA.Manager
 	//meta! sender="AgentEnvironment", id="56", type="Notice"
 	public void processPatientArrival(MessageForm message)
 	{
+        MyMessage msg = (MyMessage) message;
+
         message.setCode(Mc.patientCare);
         message.setAddressee(mySim().findAgent(Id.agentHospital));
+
+        System.out.println(mySim().currentTime() + " | Požiadanie o vykonanie vyšetrenia | " + msg.getPatient());
+
         request(message);
 	}
 
@@ -58,12 +63,12 @@ public class ManagerBoss extends OSPABA.Manager
 	{
 		switch (message.code())
 		{
-		case Mc.patientCare:
-			processPatientCare(message);
-		break;
-
 		case Mc.patientArrival:
 			processPatientArrival(message);
+		break;
+
+		case Mc.patientCare:
+			processPatientCare(message);
 		break;
 
 		default:

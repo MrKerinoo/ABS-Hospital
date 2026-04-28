@@ -1,6 +1,9 @@
 package entities;
 
-public class Patient {
+import OSPAnimator.AnimImageItem;
+import simulation.Config;
+
+public class Patient extends AnimImageItem {
 
     private int id;
     private int priority;
@@ -8,6 +11,8 @@ public class Patient {
     private boolean withAmbulance;
 
     public Patient (int id) {
+        super(Config.IMG_PATIENT, 64, 64);
+        setZIndex(1);
         this.id = id;
     }
 

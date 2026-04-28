@@ -1,8 +1,8 @@
 package gui;
 
-import OSPABA.ISimDelegate;
-import OSPABA.SimState;
-import OSPABA.Simulation;
+import gui.panels.ControlPanel;
+import gui.panels.animation.AnimationPanel;
+import gui.panels.simulation.SimulationPanel;
 import simulation.MySimulation;
 
 import javax.swing.*;
@@ -12,7 +12,7 @@ public class MainFrame extends JFrame {
     private final MySimulation core;
     private final JTabbedPane tabbedPane;
 
-    public MainFrame (MySimulation core) {
+    public MainFrame(MySimulation core) {
         super("Simulácia nemocnice");
         this.core = core;
 
@@ -20,21 +20,17 @@ public class MainFrame extends JFrame {
         this.setSize(1920, 1030);
         this.setLayout(new BorderLayout());
 
+        AnimationPanel animationPanel = new AnimationPanel(core);
+
+        this.add(new ControlPanel(this.core, animationPanel), BorderLayout.NORTH);
         this.tabbedPane = new JTabbedPane();
 
-        this.tabbedPane.addTab("Simulácia", this.createSimulationTab());
+        SimulationPanel simulationPanel = new SimulationPanel(core);
 
-        this.tabbedPane.addTab("Animácia", null);
+        this.tabbedPane.addTab("Simulácia", simulationPanel);
+        this.tabbedPane.addTab("Animácia", animationPanel);
 
         this.add(this.tabbedPane, BorderLayout.CENTER);
         this.setVisible(true);
-    }
-
-    private JPanel createSimulationTab() {
-        JPanel mainPanel = new JPanel(new BorderLayout(5, 5));
-
-        core.simulate(1, 2_419_200);
-
-        return mainPanel;
     }
 }

@@ -13,6 +13,8 @@ public class MyMessage extends OSPABA.MessageForm
     private Doctor doctor;
     private Ambulance ambulance;
 
+    private boolean isMedicalExam;
+
 	public MyMessage(Simulation mySim)
 	{
 		super(mySim);
@@ -25,6 +27,8 @@ public class MyMessage extends OSPABA.MessageForm
         nurse = original.getNurse();
         doctor = original.getDoctor();
         ambulance = original.getAmbulance();
+
+        isMedicalExam = original.isMedicalExam();
 		// copy() is called in superclass
 	}
 
@@ -58,6 +62,10 @@ public class MyMessage extends OSPABA.MessageForm
         return ambulance;
     }
 
+    public boolean isMedicalExam() {
+        return isMedicalExam;
+    }
+
     public void setPatient(Patient patient) {
         this.patient = patient;
     }
@@ -72,5 +80,9 @@ public class MyMessage extends OSPABA.MessageForm
 
     public void setAmbulance(Ambulance ambulance) {
         this.ambulance = ambulance;
+    }
+
+    public void setMedicalExam(boolean medicalExam) {
+        isMedicalExam = medicalExam;
     }
 }

@@ -23,14 +23,21 @@ public class ProcessMovePatient extends OSPABA.Process
 	//meta! sender="AgentHospital", id="93", type="Start"
 	public void processStart(MessageForm message)
 	{
+        double duration = myAgent().getEntranceAmbulanceMoveGenerator().randDouble();
+
+        message.setCode(Mc.finish);
+        hold(duration , message);
 	}
 
 	//meta! userInfo="Process messages defined in code", id="0"
 	public void processDefault(MessageForm message)
 	{
 		switch (message.code())
-		{
-		}
+        {
+            case Mc.finish:
+                assistantFinished(message);
+                break;
+        }
 	}
 
 	//meta! userInfo="Generated code: do not modify", tag="begin"

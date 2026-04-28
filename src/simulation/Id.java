@@ -8,15 +8,13 @@ public class Id extends OSPABA.IdList
 	public static final int agentBoss = 1;
 	public static final int agentEnvironment = 2;
 	public static final int agentHospital = 5;
-	public static final int agentPersonnel = 7;
-	public static final int agentAmbulance = 9;
+	public static final int agentResources = 7;
 	public static final int agentEntranceExam = 12;
 	public static final int agentMedicalExam = 13;
 	public static final int managerBoss = 101;
 	public static final int managerEnvironment = 102;
 	public static final int managerHospital = 105;
-	public static final int managerPersonnel = 107;
-	public static final int managerAmbulance = 109;
+	public static final int managerResources = 107;
 	public static final int managerEntranceExam = 112;
 	public static final int managerMedicalExam = 113;
 	public static final int schedulerWalk = 1001;

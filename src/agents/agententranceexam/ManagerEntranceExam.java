@@ -29,12 +29,12 @@ public class ManagerEntranceExam extends OSPABA.Manager
 	{
 	}
 
-	//meta! sender="AgentHospital", id="79", type="Response"
+	//meta! userInfo="Removed from model"
 	public void processRequestAmbulance(MessageForm message)
 	{
 	}
 
-	//meta! sender="AgentHospital", id="72", type="Response"
+	//meta! userInfo="Removed from model"
 	public void processRequestPersonnel(MessageForm message)
 	{
 	}
@@ -62,20 +62,12 @@ public class ManagerEntranceExam extends OSPABA.Manager
 	{
 		switch (message.code())
 		{
-		case Mc.finish:
-			processFinish(message);
-		break;
-
-		case Mc.requestPersonnel:
-			processRequestPersonnel(message);
-		break;
-
 		case Mc.entranceExamination:
 			processEntranceExamination(message);
 		break;
 
-		case Mc.requestAmbulance:
-			processRequestAmbulance(message);
+		case Mc.finish:
+			processFinish(message);
 		break;
 
 		default:

@@ -25,8 +25,6 @@ public class AgentMedicalExam extends OSPABA.Agent
 	{
 		new ManagerMedicalExam(Id.managerMedicalExam, mySim(), this);
 		new ProcessMedicalExam(Id.processMedicalExam, mySim(), this);
-		addOwnMessage(Mc.requestAmbulance);
-		addOwnMessage(Mc.requestPersonnel);
 		addOwnMessage(Mc.medicalExamination);
 	}
 	//meta! tag="end"

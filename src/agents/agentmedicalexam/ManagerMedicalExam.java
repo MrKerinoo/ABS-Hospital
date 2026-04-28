@@ -24,16 +24,6 @@ public class ManagerMedicalExam extends OSPABA.Manager
 		}
 	}
 
-	//meta! sender="AgentHospital", id="83", type="Response"
-	public void processRequestAmbulance(MessageForm message)
-	{
-	}
-
-	//meta! sender="AgentHospital", id="78", type="Response"
-	public void processRequestPersonnel(MessageForm message)
-	{
-	}
-
 	//meta! sender="ProcessMedicalExam", id="53", type="Finish"
 	public void processFinish(MessageForm message)
 	{
@@ -62,20 +52,12 @@ public class ManagerMedicalExam extends OSPABA.Manager
 	{
 		switch (message.code())
 		{
-		case Mc.medicalExamination:
-			processMedicalExamination(message);
-		break;
-
-		case Mc.requestPersonnel:
-			processRequestPersonnel(message);
-		break;
-
-		case Mc.requestAmbulance:
-			processRequestAmbulance(message);
-		break;
-
 		case Mc.finish:
 			processFinish(message);
+		break;
+
+		case Mc.medicalExamination:
+			processMedicalExamination(message);
 		break;
 
 		default:

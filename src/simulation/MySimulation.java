@@ -2,19 +2,20 @@ package simulation;
 
 import OSPABA.*;
 import agents.agentmedicalexam.*;
-import agents.agentambulance.*;
+import agents.agentresources.*;
 import agents.agentenvironment.*;
 import agents.agentboss.*;
 import agents.agententranceexam.*;
 import agents.agenthospital.*;
-import agents.agentpersonnel.*;
 import statistics.DiscreteStatistics;
-
 import java.util.Random;
 
 public class MySimulation extends OSPABA.Simulation
 {
     private Random random;
+
+    private int nursesCount;
+    private int doctorsCount;
 
     // GLOBAL STATISTICS
 
@@ -36,7 +37,10 @@ public class MySimulation extends OSPABA.Simulation
 		// Create global statistcis
         patientsIn = new DiscreteStatistics();
 
-        this.random = new Random();
+        this.random = new Random(1);
+
+        this.nursesCount = 5;
+        this.doctorsCount = 3;
 	}
 
 	@Override
@@ -51,6 +55,11 @@ public class MySimulation extends OSPABA.Simulation
 	public void replicationFinished()
 	{
         patientsIn.add(agentEnvironment().getPatientsIn());
+
+        if (animatorExists()) {
+            animator().clearAll();
+        }
+
 		// Collect local statistics into global, update UI, etc...
 		super.replicationFinished();
 	}
@@ -68,8 +77,7 @@ public class MySimulation extends OSPABA.Simulation
 		setAgentBoss(new AgentBoss(Id.agentBoss, this, null));
 		setAgentEnvironment(new AgentEnvironment(Id.agentEnvironment, this, agentBoss()));
 		setAgentHospital(new AgentHospital(Id.agentHospital, this, agentBoss()));
-		setAgentPersonnel(new AgentPersonnel(Id.agentPersonnel, this, agentHospital()));
-		setAgentAmbulance(new AgentAmbulance(Id.agentAmbulance, this, agentHospital()));
+		setAgentResources(new AgentResources(Id.agentResources, this, agentHospital()));
 		setAgentEntranceExam(new AgentEntranceExam(Id.agentEntranceExam, this, agentHospital()));
 		setAgentMedicalExam(new AgentMedicalExam(Id.agentMedicalExam, this, agentHospital()));
 	}
@@ -98,21 +106,13 @@ public AgentHospital agentHospital()
 	public void setAgentHospital(AgentHospital agentHospital)
 	{_agentHospital = agentHospital; }
 
-	private AgentPersonnel _agentPersonnel;
+	private AgentResources _agentResources;
 
-public AgentPersonnel agentPersonnel()
-	{ return _agentPersonnel; }
+public AgentResources agentResources()
+	{ return _agentResources; }
 
-	public void setAgentPersonnel(AgentPersonnel agentPersonnel)
-	{_agentPersonnel = agentPersonnel; }
-
-	private AgentAmbulance _agentAmbulance;
-
-public AgentAmbulance agentAmbulance()
-	{ return _agentAmbulance; }
-
-	public void setAgentAmbulance(AgentAmbulance agentAmbulance)
-	{_agentAmbulance = agentAmbulance; }
+	public void setAgentResources(AgentResources agentResources)
+	{_agentResources = agentResources; }
 
 	private AgentEntranceExam _agentEntranceExam;
 
@@ -130,4 +130,21 @@ public AgentMedicalExam agentMedicalExam()
 	public void setAgentMedicalExam(AgentMedicalExam agentMedicalExam)
 	{_agentMedicalExam = agentMedicalExam; }
 	//meta! tag="end"
+
+
+    public int getNursesCount() {
+        return nursesCount;
+    }
+
+    public int getDoctorsCount() {
+        return doctorsCount;
+    }
+
+    public void setNursesCount(int nursesCount) {
+        this.nursesCount = nursesCount;
+    }
+
+    public void setDoctorsCount(int doctorsCount) {
+        this.doctorsCount = doctorsCount;
+    }
 }

@@ -26,8 +26,6 @@ public class AgentEntranceExam extends OSPABA.Agent
 		new ManagerEntranceExam(Id.managerEntranceExam, mySim(), this);
 		new ProcessEntranceExam(Id.processEntranceExam, mySim(), this);
 		addOwnMessage(Mc.entranceExamination);
-		addOwnMessage(Mc.requestAmbulance);
-		addOwnMessage(Mc.requestPersonnel);
 	}
 	//meta! tag="end"
 }

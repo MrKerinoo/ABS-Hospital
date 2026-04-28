@@ -1,6 +1,7 @@
 package agents.agentenvironment;
 
 import OSPABA.*;
+import entities.Patient;
 import simulation.*;
 
 //meta! id="2"
@@ -35,16 +36,24 @@ public class ManagerEnvironment extends OSPABA.Manager
 	public void processFinishSchedulerWalk(MessageForm message)
 	{
         MyMessage msg = (MyMessage) message;
+        Patient patient = myAgent().getPatientGenerator().generatePatient();
+
+        patient.setArrivalTime(mySim().currentTime());
+        patient.setWithAmbulance(false);
+
+        if (mySim().animatorExists()) {
+            mySim().animator().register(patient);
+
+            patient.setPosition(380, 780);
+        }
 
         message.setCode(Mc.patientArrival);
         message.setAddressee(Id.agentBoss);
 
         myAgent().setPatientsIn(myAgent().getPatientsIn() + 1);
-        msg.getPatient().setArrivalTime(mySim().currentTime());
-        msg.getPatient().setWithAmbulance(false);
+        System.out.println(mySim().currentTime() + " | Príchod pacienta | " + patient);
 
-        System.out.println(mySim().currentTime() + " | " + msg.getPatient());
-
+        msg.setPatient(patient);
         notice(message);
 
         MyMessage nextMsg = new MyMessage(mySim());
@@ -56,15 +65,25 @@ public class ManagerEnvironment extends OSPABA.Manager
 	public void processFinishSchedulerAmbulanceCar(MessageForm message)
 	{
         MyMessage msg = (MyMessage) message;
+        Patient patient = myAgent().getPatientGenerator().generatePatient();
+
+        if (mySim().animatorExists()) {
+            mySim().animator().register(patient);
+
+            patient.setPosition(1350, 780);
+        }
 
         message.setCode(Mc.patientArrival);
         message.setAddressee(Id.agentBoss);
 
         myAgent().setPatientsIn(myAgent().getPatientsIn() + 1);
-        msg.getPatient().setArrivalTime(mySim().currentTime());
-        msg.getPatient().setWithAmbulance(true);
+        System.out.println(mySim().currentTime() + " | Príchod pacienta | " + patient);
 
-        System.out.println(mySim().currentTime() + " | " + msg.getPatient());
+
+        patient.setArrivalTime(mySim().currentTime());
+        patient.setWithAmbulance(true);
+
+        msg.setPatient(patient);
 
         notice(message);
 
@@ -103,6 +122,10 @@ public class ManagerEnvironment extends OSPABA.Manager
 	{
 		switch (message.code())
 		{
+		case Mc.patientExit:
+			processPatientExit(message);
+		break;
+
 		case Mc.finish:
 			switch (message.sender().id())
 			{
@@ -118,10 +141,6 @@ public class ManagerEnvironment extends OSPABA.Manager
 
 		case Mc.noticeInit:
 			processNoticeInit(message);
-		break;
-
-		case Mc.patientExit:
-			processPatientExit(message);
 		break;
 
 		default:

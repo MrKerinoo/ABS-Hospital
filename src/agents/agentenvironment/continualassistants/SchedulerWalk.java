@@ -23,17 +23,11 @@ public class SchedulerWalk extends OSPABA.Scheduler
 	//meta! sender="AgentEnvironment", id="9", type="Start"
 	public void processStart(MessageForm message)
 	{
-        MyMessage msg = (MyMessage) message;
-
-        Patient patient = myAgent().getPatientGenerator().generatePatient();
-
-        msg.setPatient(patient);
-
         double nextArrival = myAgent().getPatientWalkGenerator().randDouble();
 
         if (mySim().currentTime() + nextArrival <= 2_419_200) {
-            msg.setCode(Mc.finish);
-            hold(nextArrival, msg);
+            message.setCode(Mc.finish);
+            hold(nextArrival, message);
         }
 	}
 
