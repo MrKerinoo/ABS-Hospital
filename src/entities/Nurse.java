@@ -1,11 +1,15 @@
 package entities;
 
-public class Nurse {
+import OSPAnimator.AnimImageItem;
+import simulation.Config;
+
+public class Nurse extends AnimImageItem {
 
     private int id;
     private Ambulance ambulance;
 
     public Nurse(int id) {
+        super(Config.IMG_NURSE, 55, 55);
         this.id = id;
     }
 

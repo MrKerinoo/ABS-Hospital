@@ -44,7 +44,7 @@ public class ManagerEnvironment extends OSPABA.Manager
         if (mySim().animatorExists()) {
             mySim().animator().register(patient);
 
-            patient.setPosition(380, 780);
+            patient.setPosition(437, 693);
         }
 
         message.setCode(Mc.patientArrival);
@@ -70,7 +70,7 @@ public class ManagerEnvironment extends OSPABA.Manager
         if (mySim().animatorExists()) {
             mySim().animator().register(patient);
 
-            patient.setPosition(1350, 780);
+            patient.setPosition(1370, 693);
         }
 
         message.setCode(Mc.patientArrival);

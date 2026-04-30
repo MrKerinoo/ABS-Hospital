@@ -1,8 +1,10 @@
 package agents.agenthospital;
 
 import OSPABA.*;
+import entities.Ambulance;
 import entities.Patient;
 import simulation.*;
+import utils.Utils;
 
 //meta! id="13"
 public class ManagerHospital extends OSPABA.Manager
@@ -39,7 +41,53 @@ public class ManagerHospital extends OSPABA.Manager
 	//meta! sender="AgentEntranceExam", id="69", type="Response"
 	public void processEntranceExamination(MessageForm message)
 	{
-	}
+        MyMessage msg = (MyMessage) message;
+        MyMessage copyMessage = (MyMessage) msg.createCopy();
+
+        Patient patient = msg.getPatient();
+        Ambulance ambulance = msg.getAmbulance();
+        System.out.println(mySim().currentTime() + " | Pacient sa presúva preč z čakárne | " + msg.getPatient());
+
+        if (mySim().animatorExists()) {
+            Utils.moveAlongPath(patient, 2, mySim().currentTime(),
+                    Utils.p2d(ambulance.getXInside(), ambulance.getYInside()),
+                    Utils.p2d(ambulance.getXAfterExam() - 33, ambulance.getYAfterExam()),
+                    Utils.p2d(ambulance.getXAfterExam(), ambulance.getYAfterExam())
+            );
+        }
+
+
+        switch (patient.getPriority()) {
+            case 1, 2:
+                myAgent().getMedicalTypeAQueue().add(msg);
+                break;
+            case 3, 4:
+                myAgent().getMedicalTypeAQueue().add(msg);
+                myAgent().getMedicalTypeBQueue().add(msg);
+                break;
+            case 5:
+                myAgent().getMedicalTypeBQueue().add(msg);
+                break;
+        }
+
+        msg.setAmbulance(null);
+        msg.setNurse(null);
+        msg.setDoctor(null);
+
+        msg.setCode(Mc.requestMedicalResources);
+        msg.setAddressee(mySim().findAgent(Id.agentResources));
+
+        System.out.println(mySim().currentTime() + " | Požiadanie o zdroje lekárskeho vyšetrenia | " + msg.getPatient());
+
+        request(msg);
+
+        copyMessage.setCode(Mc.releaseEntranceResources);
+        copyMessage.setAddressee(mySim().findAgent(Id.agentResources));
+
+        System.out.println(mySim().currentTime() + " | Uvoľnenie zdrojov po vstupnom vyšetrení | " + msg.getPatient());
+
+        notice(copyMessage);
+    }
 
     //meta! sender="AgentMedicalExam", id="70", type="Response"
     public void processMedicalExamination(MessageForm message)
@@ -54,7 +102,20 @@ public class ManagerHospital extends OSPABA.Manager
         myAgent().getEntranceQueue().remove(msg);
         System.out.println(mySim().currentTime() + " | Pacient vstupuje do ambulancie |" + msg.getPatient());
 
-        msg.getAmbulance().setPatient(msg.getPatient());
+        Patient patient = msg.getPatient();
+        Ambulance ambulance = msg.getAmbulance();
+
+        msg.getAmbulance().setPatient(patient);
+
+        patient.setVisitedAmbulance(ambulance);
+
+        if (mySim().animatorExists()) {
+            Utils.moveAlongPath(patient, 2, mySim().currentTime(),
+                    Utils.p2d(ambulance.getXDoor(), ambulance.getYDoor()),
+                    Utils.p2d(ambulance.getXInside(), ambulance.getYInside()),
+                    Utils.p2d(ambulance.getXPatient(), ambulance.getYPatient())
+            );
+        }
 
         msg.setCode(Mc.entranceExamination);
         msg.setAddressee(mySim().findAgent(Id.agentEntranceExam));
@@ -65,6 +126,23 @@ public class ManagerHospital extends OSPABA.Manager
     //meta! sender="AgentResources", id="116", type="Response"
     public void processRequestMedicalResources(MessageForm message)
     {
+        MyMessage msg = (MyMessage) message;
+
+        Patient patient = msg.getPatient();
+        Ambulance ambulance = msg.getAmbulance();
+
+        if (ambulance.getType() == 'A') {
+            myAgent().getMedicalTypeAQueue().poll();
+            myAgent().getMedicalTypeBQueue().remove(msg);
+        } else {
+            myAgent().getMedicalTypeBQueue().poll();
+            myAgent().getMedicalTypeAQueue().remove(msg);
+        }
+
+        System.out.println(mySim().currentTime() + " | Pacient vstupuje do ambulancie |" + msg.getPatient());
+
+        msg.getAmbulance().setPatient(patient);
+
     }
 
 	//meta! sender="ProcessMovePatient", id="93", type="Finish"
@@ -77,25 +155,7 @@ public class ManagerHospital extends OSPABA.Manager
         msg.setCode(Mc.requestEntranceResources);
         msg.setAddressee(mySim().findAgent(Id.agentResources));
 
-        Patient patient = msg.getPatient();
-
-        if (mySim().animatorExists()) {
-            double start = Math.max(patient.getEndTimeOfAllAnims(), mySim().currentTime());
-
-            double randX = myAgent().getRandomXGenerator().randDouble();
-            double randY = myAgent().getRandomYGenerator().randDouble();
-
-            if (patient.isWithAmbulance()) {
-                patient.moveTo(start, 3.0, 1350, 300);
-                patient.moveTo(start, 3, randX, randY);
-            } else {
-                patient.moveTo(start, 3.0, 380, 300);
-                patient.moveTo(start, 3, randX, randY);
-            }
-
-        }
-
-        System.out.println(mySim().currentTime() + " | Požiadanie o zdroje | " + msg.getPatient());
+        System.out.println(mySim().currentTime() + " | Požiadanie o zdroje vstupného vyšetrenia| " + msg.getPatient());
 
         request(msg);
 	}

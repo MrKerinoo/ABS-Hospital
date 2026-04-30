@@ -10,8 +10,10 @@ public class Patient extends AnimImageItem {
     private double arrivalTime;
     private boolean withAmbulance;
 
+    private Ambulance visitedAmbulance;
+
     public Patient (int id) {
-        super(Config.IMG_PATIENT, 64, 64);
+        super(Config.IMG_PATIENT, 45, 45);
         setZIndex(1);
         this.id = id;
     }
@@ -32,6 +34,10 @@ public class Patient extends AnimImageItem {
         return withAmbulance;
     }
 
+    public Ambulance getVisitedAmbulance() {
+        return visitedAmbulance;
+    }
+
     public void setId(int id) {
         this.id = id;
     }
@@ -46,6 +52,10 @@ public class Patient extends AnimImageItem {
 
     public void setWithAmbulance(boolean withAmbulance) {
         this.withAmbulance = withAmbulance;
+    }
+
+    public void setVisitedAmbulance(Ambulance visitedAmbulance) {
+        this.visitedAmbulance = visitedAmbulance;
     }
 
     @Override

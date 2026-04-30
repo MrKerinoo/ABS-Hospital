@@ -12,12 +12,18 @@ public class ResourceComparator implements Comparator<MessageForm> {
         MyMessage msg1 = (MyMessage) m1;
         MyMessage msg2 = (MyMessage) m2;
 
-        boolean m1Medical = msg1.code() == Mc.requestMedicalResources;
-        boolean m2Medical = msg2.code() == Mc.requestMedicalResources;
+        int codeCompare = Integer.compare(msg2.code(), msg1.code());
+        if (codeCompare != 0) return codeCompare;
 
-        if (m1Medical && !m2Medical) return -1;
-        if (!m1Medical && m2Medical) return 1;
+        int priorityCompare = Integer.compare(
+                msg1.getPatient().getPriority(),
+                msg2.getPatient().getPriority()
+        );
 
-        return Integer.compare(msg1.getPatient().getPriority(), msg2.getPatient().getPriority());
+        if (priorityCompare != 0) {
+            return priorityCompare;
+        }
+
+        return Double.compare(msg1.getPatient().getArrivalTime(), msg2.getPatient().getArrivalTime());
     }
 }

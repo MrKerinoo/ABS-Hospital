@@ -3,6 +3,7 @@ package agents.agenthospital;
 import OSPABA.*;
 import agents.agenthospital.continualassistants.*;
 import generators.ContinuousGenerator;
+import generators.TriangularGenerator;
 import simulation.*;
 import comparators.EntranceExamComparator;
 import comparators.MedicalExamComparator;
@@ -16,9 +17,10 @@ public class AgentHospital extends OSPABA.Agent
     private PriorityQueue<MyMessage> medicalTypeAQueue;
     private PriorityQueue<MyMessage> medicalTypeBQueue;
 
-    private ContinuousGenerator entranceAmbulanceMoveGenerator;
-    private ContinuousGenerator randomXGenerator;
-    private ContinuousGenerator randomYGenerator;
+    private TriangularGenerator walkEntranceMoveGenerator;
+    private ContinuousGenerator ambulanceCarEntranceMoveGenerator;
+    private ContinuousGenerator randomXWaitingRoomGenerator;
+    private ContinuousGenerator randomYWaitingRoomGenerator;
 
 	public AgentHospital(int id, Simulation mySim, Agent parent)
 	{
@@ -38,9 +40,11 @@ public class AgentHospital extends OSPABA.Agent
 
         Random seedRandom = ((MySimulation) mySim()).getSeedRandom();
 
-        entranceAmbulanceMoveGenerator = new ContinuousGenerator(seedRandom, 150, 240);
-        randomXGenerator = new ContinuousGenerator(seedRandom, 190, 1650);
-        randomYGenerator = new ContinuousGenerator(seedRandom,240, 400);
+        walkEntranceMoveGenerator = new TriangularGenerator(seedRandom, 120, 300, 150);
+        ambulanceCarEntranceMoveGenerator = new ContinuousGenerator(seedRandom, 90, 200);
+
+        randomXWaitingRoomGenerator = new ContinuousGenerator(seedRandom, 491, 1200);
+        randomYWaitingRoomGenerator = new ContinuousGenerator(seedRandom,445, 620);
     }
 
 	//meta! userInfo="Generated code: do not modify", tag="begin"
@@ -69,17 +73,19 @@ public class AgentHospital extends OSPABA.Agent
         return medicalTypeBQueue;
     }
 
-    public ContinuousGenerator getRandomXGenerator() {
-        return randomXGenerator;
+    public ContinuousGenerator getRandomXWaitingRoomGenerator() {
+        return randomXWaitingRoomGenerator;
     }
 
-    public ContinuousGenerator getRandomYGenerator() {
-        return randomYGenerator;
+    public ContinuousGenerator getRandomYWaitingRoomGenerator() {
+        return randomYWaitingRoomGenerator;
     }
 
-    public ContinuousGenerator getEntranceAmbulanceMoveGenerator() {
-        return entranceAmbulanceMoveGenerator;
+    public ContinuousGenerator getAmbulanceCarEntranceMoveGenerator() {
+        return ambulanceCarEntranceMoveGenerator;
+    }
 
-
+    public TriangularGenerator getWalkEntranceMoveGenerator() {
+        return walkEntranceMoveGenerator;
     }
 }

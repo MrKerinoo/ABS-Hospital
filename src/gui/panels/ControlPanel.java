@@ -5,6 +5,7 @@ import OSPABA.SimState;
 import OSPABA.Simulation;
 import gui.panels.animation.AnimationPanel;
 import simulation.MySimulation;
+import utils.Utils;
 
 import javax.swing.*;
 import java.awt.*;
@@ -172,20 +173,11 @@ public class ControlPanel extends JPanel implements ISimDelegate {
         }
     }
 
-    private String formatSimTime(double seconds) {
-        int day = (int) (seconds / 86400) + 1;
-        int remaining = (int) (seconds % 86400);
-        int hours = remaining / 3600;
-        int minutes = (remaining % 3600) / 60;
-        int secs = remaining % 60;
-        return String.format("Deň %d  %02d:%02d:%02d", day, hours, minutes, secs);
-    }
-
     @Override
     public void refresh(Simulation sim) {
         if (chkVisualization.isSelected() || core.currentReplication() % 50 == 0) {
             SwingUtilities.invokeLater(() -> {
-                lblSimTime.setText(formatSimTime(core.currentTime()));
+                lblSimTime.setText(Utils.formatSimTime(core.currentTime()));
                 lblReplications.setText("Replikácie: " + core.currentReplication() + "/" + txtReplications.getText());
             });
         }

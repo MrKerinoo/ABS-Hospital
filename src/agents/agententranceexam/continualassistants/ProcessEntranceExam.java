@@ -1,6 +1,7 @@
 package agents.agententranceexam.continualassistants;
 
 import OSPABA.*;
+import entities.Patient;
 import simulation.*;
 import agents.agententranceexam.*;
 import OSPABA.Process;
@@ -23,13 +24,37 @@ public class ProcessEntranceExam extends OSPABA.Process
 	//meta! sender="AgentEntranceExam", id="50", type="Start"
 	public void processStart(MessageForm message)
 	{
-	}
+        MyMessage msg = (MyMessage) message;
+
+        double duration;
+        int priority;
+
+        Patient patient = msg.getPatient();
+
+        if (patient.isWithAmbulance()) {
+            duration = myAgent().getEntranceExamAmbulanceCarGenerator().randInt();
+            priority = myAgent().getPriorityAmbulanceCarGenerator().randInt();
+        } else {
+            duration = myAgent().getEntranceExamWalkGenerator().randDouble();
+            priority = myAgent().getPriorityWalkGenerator().randInt();
+        }
+
+        patient.setPriority(priority);
+
+        System.out.println(mySim().currentTime() + " | Začiatok vstupného vyšetrenia | " + msg.getPatient());
+
+        msg.setCode(Mc.finish);
+        hold(duration, msg);
+    }
 
 	//meta! userInfo="Process messages defined in code", id="0"
 	public void processDefault(MessageForm message)
 	{
 		switch (message.code())
 		{
+            case Mc.finish:
+                assistantFinished(message);
+                break;
 		}
 	}
 

@@ -1,6 +1,8 @@
 package agents.agententranceexam;
 
 import OSPABA.*;
+import entities.Ambulance;
+import entities.Patient;
 import simulation.*;
 
 //meta! id="30"
@@ -27,21 +29,22 @@ public class ManagerEntranceExam extends OSPABA.Manager
 	//meta! sender="AgentHospital", id="69", type="Request"
 	public void processEntranceExamination(MessageForm message)
 	{
-	}
+        MyMessage msg = (MyMessage) message;
 
-	//meta! userInfo="Removed from model"
-	public void processRequestAmbulance(MessageForm message)
-	{
-	}
+        msg.setAddressee(myAgent().findAssistant(Id.processEntranceExam));
 
-	//meta! userInfo="Removed from model"
-	public void processRequestPersonnel(MessageForm message)
-	{
+        startContinualAssistant(msg);
 	}
 
 	//meta! sender="ProcessEntranceExam", id="50", type="Finish"
 	public void processFinish(MessageForm message)
 	{
+        MyMessage msg = (MyMessage) message;
+
+        System.out.println(mySim().currentTime() + " | Koniec vstupného vyšetrenia | " + msg.getPatient());
+
+        message.setCode(Mc.entranceExamination);
+        response(message);
 	}
 
 	//meta! userInfo="Process messages defined in code", id="0"

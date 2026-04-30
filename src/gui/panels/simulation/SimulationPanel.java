@@ -21,6 +21,8 @@ public class SimulationPanel extends JPanel implements ISimDelegate {
 
     private QueuePanel entranceQueuePanel;
     private QueuePanel medicalQueuePanel;
+    private PersonnelPanel doctorsPanel;
+    private PersonnelPanel nursesPanel;
 
     public SimulationPanel(MySimulation core) {
         this.core = core;
@@ -82,6 +84,7 @@ public class SimulationPanel extends JPanel implements ISimDelegate {
     private JPanel createQueuesSection() {
         JPanel container = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
 
+        // PACIENTI
         entranceQueuePanel = new QueuePanel(
                 "Rad pred vstupným vyšetrením",
                 new String[]{"#", "ID", "Sanitka"},
@@ -94,11 +97,28 @@ public class SimulationPanel extends JPanel implements ISimDelegate {
                 true
         );
 
+        // PERSONÁL
+        doctorsPanel = new PersonnelPanel(
+                "Zoznam lekárov",
+                new String[]{"#", "ID", "Miesto", "Pracuje"},
+                "D"
+        );
+
+        nursesPanel = new PersonnelPanel(
+                "Zoznam sestričiek",
+                new String[]{"#", "ID", "Miesto", "Pracuje"},
+                "S"
+        );
+
         container.add(entranceQueuePanel);
         container.add(medicalQueuePanel);
+        container.add(doctorsPanel);
+        container.add(nursesPanel);
 
         return container;
     }
+
+
 
     // --- Logic & Updates ---
 
@@ -107,7 +127,7 @@ public class SimulationPanel extends JPanel implements ISimDelegate {
         SwingUtilities.invokeLater(() -> {
             if (entranceQueuePanel == null || medicalQueuePanel == null) return;
 
-            // Update Ambulances
+            // --- Update Ambulances ---
             List<Ambulance> listA = core.agentResources().getAllAmbulancesA();
             List<Ambulance> listB = core.agentResources().getAllAmbulancesB();
 
@@ -118,7 +138,7 @@ public class SimulationPanel extends JPanel implements ISimDelegate {
                 if (i < listB.size()) panelsB.get(i).refresh(listB.get(i));
             }
 
-            // Update Queues
+            // --- Update Queues (Pacienti) ---
             entranceQueuePanel.refresh(
                     core.agentHospital().getEntranceQueue(),
                     new EntranceExamComparator()
@@ -127,6 +147,14 @@ public class SimulationPanel extends JPanel implements ISimDelegate {
                     core.agentHospital().getMedicalTypeBQueue(),
                     new MedicalExamComparator()
             );
+
+            // --- Update Personnel (Personál) ---
+            if (doctorsPanel != null) {
+                doctorsPanel.refresh(core.agentResources().getAllDoctors());
+            }
+            if (nursesPanel != null) {
+                nursesPanel.refresh(core.agentResources().getAllNurses());
+            }
         });
     }
 

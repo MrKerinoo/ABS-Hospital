@@ -28,7 +28,8 @@ public class AgentResources extends OSPABA.Agent
     List<Ambulance> allAmbulancesA;
     List<Ambulance> allAmbulancesB;
 
-    PriorityQueue<MessageForm> waitingRequests;
+    PriorityQueue<MessageForm> waitingAmbulanceARequests;
+    PriorityQueue<MessageForm> waitingAmbulanceBRequests;
 
     private ContinuousGenerator entranceAmbulanceMoveGenerator;
     private TriangularGenerator ambulanceMoveGenerator;
@@ -55,7 +56,8 @@ public class AgentResources extends OSPABA.Agent
         allAmbulancesA = new ArrayList<>();
         allAmbulancesB = new ArrayList<>();
 
-        waitingRequests = new PriorityQueue<>(new ResourceComparator());
+        waitingAmbulanceARequests = new PriorityQueue<>(new ResourceComparator());
+        waitingAmbulanceBRequests = new PriorityQueue<>(new ResourceComparator());
 
         Random seedRandom = ((MySimulation) mySim()).getSeedRandom();
 
@@ -66,22 +68,48 @@ public class AgentResources extends OSPABA.Agent
             Nurse n = new Nurse(i);
             freeNurses.add(n);
             allNurses.add(n);
+
+            if(mySim().animatorExists()) {
+                mySim().animator().register(n);
+
+                if (i < 7) {
+                    n.setPosition(1422 + (i * 45), 568);
+                } else {
+                    n.setPosition(1422 + ((i - 7) * 45), 626);
+                }
+            }
         }
 
         for (int i = 0; i < ((MySimulation)mySim()).getDoctorsCount(); i++) {
             Doctor d = new Doctor(i);
             freeDoctors.add(d);
             allDoctors.add(d);
+
+            if(mySim().animatorExists()) {
+                mySim().animator().register(d);
+
+                if (i < 7) {
+                    d.setPosition(1422 + (i * 45), 450);
+                } else {
+                    d.setPosition(1422 + ((i - 7) * 45), 509);
+                }
+
+            }
         }
 
+        int ambAstartX = 191;
+        int ambBStartX = 878;
+        int startY = 117;
+        int gap = 117;
+
         for (int i = 0; i < 5; i++) {
-            Ambulance a = new Ambulance(i, 'A');
+            Ambulance a = new Ambulance(i, 'A', ambAstartX + (i * gap), startY);
             freeAmbulancesA.add(a);
             allAmbulancesA.add(a);
         }
 
         for (int i = 0; i < 7; i++) {
-            Ambulance b = new Ambulance(i + 5, 'B');
+            Ambulance b = new Ambulance(i + 5, 'B', ambBStartX + (i * gap), startY);
             freeAmbulancesB.add(b);
             allAmbulancesB.add(b);
         }
@@ -132,8 +160,12 @@ public class AgentResources extends OSPABA.Agent
         return allAmbulancesB;
     }
 
-    public PriorityQueue<MessageForm> getWaitingRequests() {
-        return waitingRequests;
+    public PriorityQueue<MessageForm> getWaitingAmbulanceARequests() {
+        return waitingAmbulanceARequests;
+    }
+
+    public PriorityQueue<MessageForm> getWaitingAmbulanceBRequests() {
+        return waitingAmbulanceBRequests;
     }
 
     public ContinuousGenerator getEntranceAmbulanceMoveGenerator() {
