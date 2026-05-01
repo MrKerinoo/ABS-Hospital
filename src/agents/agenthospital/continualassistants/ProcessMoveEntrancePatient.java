@@ -8,9 +8,9 @@ import OSPABA.Process;
 import utils.Utils;
 
 //meta! id="92"
-public class ProcessMovePatient extends OSPABA.Process
+public class ProcessMoveEntrancePatient extends OSPABA.Process
 {
-	public ProcessMovePatient(int id, Simulation mySim, CommonAgent myAgent)
+	public ProcessMoveEntrancePatient(int id, Simulation mySim, CommonAgent myAgent)
 	{
 		super(id, mySim, myAgent);
 	}
@@ -66,11 +66,11 @@ public class ProcessMovePatient extends OSPABA.Process
 	public void processDefault(MessageForm message)
 	{
 		switch (message.code())
-        {
+		{
             case Mc.finish:
                 assistantFinished(message);
                 break;
-        }
+		}
 	}
 
 	//meta! userInfo="Generated code: do not modify", tag="begin"

@@ -25,7 +25,7 @@ public class ProcessMovePersonnel extends OSPABA.Process
 	}
 
 	//meta! sender="AgentResources", id="47", type="Start"
-    public void processStart(MessageForm message)
+	public void processStart(MessageForm message)
     {
         MyMessage msg = (MyMessage) message;
         double durationNurse = 0;
@@ -38,59 +38,65 @@ public class ProcessMovePersonnel extends OSPABA.Process
         if (nurse != null) {
             Ambulance currentAmbulance = nurse.getAmbulance();
 
-            if (currentAmbulance == null) {
-                durationNurse = myAgent().getEntranceAmbulanceMoveGenerator().randDouble();
+            if (ambulance != currentAmbulance) {
+                if (currentAmbulance == null) {
+                    durationNurse = myAgent().getEntranceAmbulanceMoveGenerator().randDouble();
 
-                if (mySim().animatorExists()) {
-                    Utils.moveAlongPath(nurse, durationNurse, mySim().currentTime(),
-                            Utils.p2d(1424, 548),
-                            Utils.p2d(1312, 548),
-                            Utils.p2d(1312, 374),
-                            Utils.p2d(ambulance.getXDoor(), ambulance.getYDoor()),
-                            Utils.p2d(ambulance.getXInside(), ambulance.getYInside()),
-                            Utils.p2d(ambulance.getXNurse(), ambulance.getYNurse())
-                    );
-                }
-            } else {
-                durationNurse = myAgent().getAmbulanceMoveGenerator().randDouble();
+                    if (mySim().animatorExists()) {
+                        Utils.moveAlongPath(nurse, durationNurse, mySim().currentTime(),
+                                Utils.p2d(1424, 548),
+                                Utils.p2d(1312, 548),
+                                Utils.p2d(1312, 374),
+                                Utils.p2d(ambulance.getXDoor(), ambulance.getYDoor()),
+                                Utils.p2d(ambulance.getXInside(), ambulance.getYInside()),
+                                Utils.p2d(ambulance.getXNurse(), ambulance.getYNurse())
+                        );
+                    }
+                } else {
+                    durationNurse = myAgent().getAmbulanceMoveGenerator().randDouble();
 
-                if (mySim().animatorExists()) {
-                    Utils.moveAlongPath(nurse, durationNurse, mySim().currentTime(),
-                            Utils.p2d(currentAmbulance.getXInside(), currentAmbulance.getYInside()),
-                            Utils.p2d(currentAmbulance.getXDoor(), currentAmbulance.getYDoor()),
-                            Utils.p2d(ambulance.getXDoor(), ambulance.getYDoor()),
-                            Utils.p2d(ambulance.getXInside(), ambulance.getYInside()),
-                            Utils.p2d(ambulance.getXNurse(), ambulance.getYNurse())
-                    );
+                    if (mySim().animatorExists()) {
+                        Utils.moveAlongPath(nurse, durationNurse, mySim().currentTime(),
+                                Utils.p2d(currentAmbulance.getXInside(), currentAmbulance.getYInside()),
+                                Utils.p2d(currentAmbulance.getXDoor(), currentAmbulance.getYDoor()),
+                                Utils.p2d(ambulance.getXDoor(), ambulance.getYDoor()),
+                                Utils.p2d(ambulance.getXInside(), ambulance.getYInside()),
+                                Utils.p2d(ambulance.getXNurse(), ambulance.getYNurse())
+                        );
+                    }
                 }
             }
-        } else if (doctor != null) {
+        }
+
+        if (doctor != null) {
             Ambulance currentAmbulance = doctor.getAmbulance();
 
-            if (doctor.getAmbulance() == null) {
-                durationDoctor = myAgent().getEntranceAmbulanceMoveGenerator().randDouble();
+            if (currentAmbulance != ambulance) {
+                if (doctor.getAmbulance() == null) {
+                    durationDoctor = myAgent().getEntranceAmbulanceMoveGenerator().randDouble();
 
-                if (mySim().animatorExists()) {
-                    Utils.moveAlongPath(doctor, durationDoctor, mySim().currentTime(),
-                            Utils.p2d(1424, 548),
-                            Utils.p2d(1312, 548),
-                            Utils.p2d(1312, 374),
-                            Utils.p2d(ambulance.getXDoor(), ambulance.getYDoor()),
-                            Utils.p2d(ambulance.getXInside(), ambulance.getYInside()),
-                            Utils.p2d(ambulance.getXDoctor(), ambulance.getYDoctor())
-                    );
-                }
-            } else {
-                durationDoctor = myAgent().getAmbulanceMoveGenerator().randDouble();
+                    if (mySim().animatorExists()) {
+                        Utils.moveAlongPath(doctor, durationDoctor, mySim().currentTime(),
+                                Utils.p2d(1424, 548),
+                                Utils.p2d(1312, 548),
+                                Utils.p2d(1312, 374),
+                                Utils.p2d(ambulance.getXDoor(), ambulance.getYDoor()),
+                                Utils.p2d(ambulance.getXInside(), ambulance.getYInside()),
+                                Utils.p2d(ambulance.getXDoctor(), ambulance.getYDoctor())
+                        );
+                    }
+                } else {
+                    durationDoctor = myAgent().getAmbulanceMoveGenerator().randDouble();
 
-                if (mySim().animatorExists()) {
-                    Utils.moveAlongPath(doctor, durationDoctor, mySim().currentTime(),
-                            Utils.p2d(currentAmbulance.getXInside(), currentAmbulance.getYInside()),
-                            Utils.p2d(currentAmbulance.getXDoor(), currentAmbulance.getYDoor()),
-                            Utils.p2d(ambulance.getXDoor(), ambulance.getYDoor()),
-                            Utils.p2d(ambulance.getXInside(), ambulance.getYInside()),
-                            Utils.p2d(ambulance.getXDoctor(), ambulance.getYDoctor())
-                    );
+                    if (mySim().animatorExists()) {
+                        Utils.moveAlongPath(doctor, durationDoctor, mySim().currentTime(),
+                                Utils.p2d(currentAmbulance.getXInside(), currentAmbulance.getYInside()),
+                                Utils.p2d(currentAmbulance.getXDoor(), currentAmbulance.getYDoor()),
+                                Utils.p2d(ambulance.getXDoor(), ambulance.getYDoor()),
+                                Utils.p2d(ambulance.getXInside(), ambulance.getYInside()),
+                                Utils.p2d(ambulance.getXDoctor(), ambulance.getYDoctor())
+                        );
+                    }
                 }
             }
         }

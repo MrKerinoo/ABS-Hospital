@@ -63,8 +63,8 @@ public class SimulationPanel extends JPanel implements ISimDelegate {
         panel.setBorder(BorderFactory.createTitledBorder("Ambulancie"));
 
         panelsA.clear();
-        for (int i = 0; i < 5; i++) {
-            AmbulancePanel ap = new AmbulancePanel("A" + (i + 1));
+        for (int i = 1; i <= 5; i++) {
+            AmbulancePanel ap = new AmbulancePanel("A" + i);
             panelsA.add(ap);
             panel.add(ap);
         }
@@ -72,8 +72,8 @@ public class SimulationPanel extends JPanel implements ISimDelegate {
         panel.add(new JSeparator(SwingConstants.VERTICAL) {{ setPreferredSize(new Dimension(2, 110)); }});
 
         panelsB.clear();
-        for (int i = 0; i < 7; i++) {
-            AmbulancePanel bp = new AmbulancePanel("B" + (i + 1));
+        for (int i = 1; i <= 7; i++) {
+            AmbulancePanel bp = new AmbulancePanel("B" + i);
             panelsB.add(bp);
             panel.add(bp);
         }
@@ -99,12 +99,14 @@ public class SimulationPanel extends JPanel implements ISimDelegate {
 
         // PERSONÁL
         doctorsPanel = new PersonnelPanel(
+                core,
                 "Zoznam lekárov",
                 new String[]{"#", "ID", "Miesto", "Pracuje"},
                 "D"
         );
 
         nursesPanel = new PersonnelPanel(
+                core,
                 "Zoznam sestričiek",
                 new String[]{"#", "ID", "Miesto", "Pracuje"},
                 "S"

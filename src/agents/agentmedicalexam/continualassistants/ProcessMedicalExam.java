@@ -2,6 +2,7 @@ package agents.agentmedicalexam.continualassistants;
 
 import OSPABA.*;
 import agents.agentmedicalexam.*;
+import entities.Patient;
 import simulation.*;
 import OSPABA.Process;
 
@@ -23,6 +24,22 @@ public class ProcessMedicalExam extends OSPABA.Process
 	//meta! sender="AgentMedicalExam", id="53", type="Start"
 	public void processStart(MessageForm message)
 	{
+        MyMessage msg = (MyMessage) message;
+
+        double duration;
+
+        Patient patient = msg.getPatient();
+
+        if (patient.isWithAmbulance()) {
+            duration = myAgent().getMedicalExamAmbulanceCarGenerator().randDouble();
+        } else {
+            duration = myAgent().getMedicalExamWalkGenerator().randDouble();
+        }
+
+        System.out.println(mySim().currentTime() + " | Začiatok lekárskeho ošetrenia | " + msg.getPatient());
+
+        msg.setCode(Mc.finish);
+        hold(duration, msg);
 	}
 
 	//meta! userInfo="Process messages defined in code", id="0"
@@ -30,6 +47,9 @@ public class ProcessMedicalExam extends OSPABA.Process
 	{
 		switch (message.code())
 		{
+            case Mc.finish:
+                assistantFinished(message);
+                break;
 		}
 	}
 

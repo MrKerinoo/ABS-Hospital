@@ -2,9 +2,9 @@ package agents.agenthospital;
 
 import OSPABA.*;
 import agents.agenthospital.continualassistants.*;
+import simulation.*;
 import generators.ContinuousGenerator;
 import generators.TriangularGenerator;
-import simulation.*;
 import comparators.EntranceExamComparator;
 import comparators.MedicalExamComparator;
 import java.util.PriorityQueue;
@@ -21,6 +21,7 @@ public class AgentHospital extends OSPABA.Agent
     private ContinuousGenerator ambulanceCarEntranceMoveGenerator;
     private ContinuousGenerator randomXWaitingRoomGenerator;
     private ContinuousGenerator randomYWaitingRoomGenerator;
+    private TriangularGenerator ambulanceMoveGenerator;
 
 	public AgentHospital(int id, Simulation mySim, Agent parent)
 	{
@@ -42,6 +43,7 @@ public class AgentHospital extends OSPABA.Agent
 
         walkEntranceMoveGenerator = new TriangularGenerator(seedRandom, 120, 300, 150);
         ambulanceCarEntranceMoveGenerator = new ContinuousGenerator(seedRandom, 90, 200);
+        ambulanceMoveGenerator = new TriangularGenerator(seedRandom, 15, 45, 20);
 
         randomXWaitingRoomGenerator = new ContinuousGenerator(seedRandom, 491, 1200);
         randomYWaitingRoomGenerator = new ContinuousGenerator(seedRandom,445, 620);
@@ -51,7 +53,8 @@ public class AgentHospital extends OSPABA.Agent
 	private void init()
 	{
 		new ManagerHospital(Id.managerHospital, mySim(), this);
-		new ProcessMovePatient(Id.processMovePatient, mySim(), this);
+		new ProcessMoveAmbulancePatient(Id.processMoveAmbulancePatient, mySim(), this);
+		new ProcessMoveEntrancePatient(Id.processMoveEntrancePatient, mySim(), this);
 		addOwnMessage(Mc.patientCare);
 		addOwnMessage(Mc.entranceExamination);
 		addOwnMessage(Mc.requestMedicalResources);
@@ -87,5 +90,9 @@ public class AgentHospital extends OSPABA.Agent
 
     public TriangularGenerator getWalkEntranceMoveGenerator() {
         return walkEntranceMoveGenerator;
+    }
+
+    public TriangularGenerator getAmbulanceMoveGenerator() {
+        return ambulanceMoveGenerator;
     }
 }

@@ -2,6 +2,8 @@ package gui.panels.simulation;
 
 import entities.Doctor;
 import entities.Nurse;
+import simulation.MySimulation;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
@@ -12,8 +14,10 @@ public class PersonnelPanel extends JPanel {
     private final DefaultTableModel tableModel;
     private final JLabel countLabel;
     private final String personnelType; // "D" pre doktorov, "S" pre sestry
+    private MySimulation core;
 
-    public PersonnelPanel(String title, String[] columns, String personnelType) {
+    public PersonnelPanel(MySimulation core, String title, String[] columns, String personnelType) {
+        this.core = core;
         this.personnelType = personnelType;
         this.setLayout(new BorderLayout());
         this.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
@@ -60,17 +64,36 @@ public class PersonnelPanel extends JPanel {
         tableModel.setRowCount(0);
         int i = 1;
         for (Object o : data) {
+            String ambLocation = "Vchod";
+            boolean isWorking = false;
+            int id = 0;
+
             if (personnelType.equals("D")) {
                 Doctor d = (Doctor) o;
-                String amb = (d.getAmbulance() != null) ? d.getAmbulance().getType() +  "" + d.getAmbulance().getId() : "Vchod";
-                String working = (d.getAmbulance() != null && d.getAmbulance().getPatient() != null) ? "Áno" : "Nie";
-                tableModel.addRow(new Object[]{i++, d.getId(), amb, working});
+                id = d.getId();
+                if (d.getAmbulance() != null) {
+                    int displayId = d.getAmbulance().getId();
+                    if (d.getAmbulance().getType() == 'B') {
+                        displayId -= 5;
+                    }
+                    ambLocation = d.getAmbulance().getType() + "" + displayId;
+                    isWorking = !core.agentResources().getFreeDoctors().contains(d);
+                }
             } else {
                 Nurse n = (Nurse) o;
-                String amb = (n.getAmbulance() != null) ? n.getAmbulance().getType()+  "" + n.getAmbulance().getId() : "Vchod";
-                String working = (n.getAmbulance() != null && n.getAmbulance().getPatient() != null) ? "Áno" : "Nie";
-                tableModel.addRow(new Object[]{i++, n.getId(), amb, working});
+                id = n.getId();
+                if (n.getAmbulance() != null) {
+                    int displayId = n.getAmbulance().getId();
+                    if (n.getAmbulance().getType() == 'B') {
+                        displayId -= 5;
+                    }
+                    ambLocation = n.getAmbulance().getType() + "" + displayId;
+                    isWorking = !core.agentResources().getFreeNurses().contains(n);
+                }
             }
+
+            String workingStr = isWorking ? "Áno" : "Nie";
+            tableModel.addRow(new Object[]{i++, id, ambLocation, workingStr});
         }
         countLabel.setText("Celkom: " + data.size());
     }

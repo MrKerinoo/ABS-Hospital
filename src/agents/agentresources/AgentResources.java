@@ -1,15 +1,14 @@
 package agents.agentresources;
 
 import OSPABA.*;
+import simulation.*;
+import agents.agentresources.continualassistants.*;
 import comparators.ResourceComparator;
 import entities.Ambulance;
 import entities.Doctor;
 import entities.Nurse;
 import generators.ContinuousGenerator;
 import generators.TriangularGenerator;
-import simulation.*;
-import agents.agentresources.continualassistants.*;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.PriorityQueue;
@@ -102,14 +101,14 @@ public class AgentResources extends OSPABA.Agent
         int startY = 117;
         int gap = 117;
 
-        for (int i = 0; i < 5; i++) {
-            Ambulance a = new Ambulance(i, 'A', ambAstartX + (i * gap), startY);
+        for (int i = 1; i <= 5; i++) {
+            Ambulance a = new Ambulance(i, 'A', ambAstartX + ((i - 1) * gap), startY);
             freeAmbulancesA.add(a);
             allAmbulancesA.add(a);
         }
 
-        for (int i = 0; i < 7; i++) {
-            Ambulance b = new Ambulance(i + 5, 'B', ambBStartX + (i * gap), startY);
+        for (int i = 1; i <= 7; i++) {
+            Ambulance b = new Ambulance(i + 5, 'B', ambBStartX + ((i - 1) * gap), startY);
             freeAmbulancesB.add(b);
             allAmbulancesB.add(b);
         }
@@ -121,8 +120,8 @@ public class AgentResources extends OSPABA.Agent
 		new ManagerResources(Id.managerResources, mySim(), this);
 		new ProcessMovePersonnel(Id.processMovePersonnel, mySim(), this);
 		addOwnMessage(Mc.releaseEntranceResources);
-		addOwnMessage(Mc.requestMedicalResources);
 		addOwnMessage(Mc.releaseMedicalResources);
+		addOwnMessage(Mc.requestMedicalResources);
 		addOwnMessage(Mc.requestEntranceResources);
 	}
 	//meta! tag="end"

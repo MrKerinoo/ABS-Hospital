@@ -2,12 +2,11 @@ package agents.agentmedicalexam;
 
 import OSPABA.*;
 import agents.agentmedicalexam.continualassistants.*;
+import simulation.*;
 import generators.ContinuousGenerator;
 import generators.DiscreteGenerator;
 import generators.EmpiricalGenerator;
 import intervals.Interval;
-import simulation.*;
-
 import java.util.List;
 import java.util.Random;
 

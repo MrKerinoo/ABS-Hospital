@@ -2,11 +2,10 @@ package agents.agententranceexam;
 
 import OSPABA.*;
 import agents.agententranceexam.continualassistants.*;
+import simulation.*;
 import generators.DiscreteGenerator;
 import generators.EmpiricalGenerator;
 import intervals.Interval;
-import simulation.*;
-
 import java.util.List;
 import java.util.Random;
 

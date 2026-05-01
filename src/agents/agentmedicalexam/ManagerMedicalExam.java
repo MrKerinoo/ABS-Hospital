@@ -24,15 +24,25 @@ public class ManagerMedicalExam extends OSPABA.Manager
 		}
 	}
 
-	//meta! sender="ProcessMedicalExam", id="53", type="Finish"
-	public void processFinish(MessageForm message)
-	{
-	}
-
 	//meta! sender="AgentHospital", id="70", type="Request"
 	public void processMedicalExamination(MessageForm message)
 	{
+        MyMessage msg = (MyMessage) message;
+
+        msg.setAddressee(myAgent().findAssistant(Id.processMedicalExam));
+        startContinualAssistant(msg);
 	}
+
+    //meta! sender="ProcessMedicalExam", id="53", type="Finish"
+    public void processFinish(MessageForm message)
+    {
+        MyMessage msg = (MyMessage) message;
+
+        System.out.println(mySim().currentTime() + " | Koniec lekárskeho ošetrenia | " + msg.getPatient());
+
+        message.setCode(Mc.medicalExamination);
+        response(message);
+    }
 
 	//meta! userInfo="Process messages defined in code", id="0"
 	public void processDefault(MessageForm message)
