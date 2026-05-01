@@ -33,8 +33,8 @@ public class ManagerMedicalExam extends OSPABA.Manager
         startContinualAssistant(msg);
 	}
 
-    //meta! sender="ProcessMedicalExam", id="53", type="Finish"
-    public void processFinish(MessageForm message)
+	//meta! sender="ProcessMedicalExam", id="53", type="Finish"
+	public void processFinish(MessageForm message)
     {
         MyMessage msg = (MyMessage) message;
 
@@ -62,12 +62,12 @@ public class ManagerMedicalExam extends OSPABA.Manager
 	{
 		switch (message.code())
 		{
-		case Mc.finish:
-			processFinish(message);
-		break;
-
 		case Mc.medicalExamination:
 			processMedicalExamination(message);
+		break;
+
+		case Mc.finish:
+			processFinish(message);
 		break;
 
 		default:

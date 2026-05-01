@@ -94,29 +94,16 @@ public class ManagerHospital extends OSPABA.Manager
     {
         MyMessage msg = (MyMessage) message;
 
-        Patient patient = msg.getPatient();
-        Ambulance ambulance = msg.getAmbulance();
         System.out.println(mySim().currentTime() + " | Pacient sa presúva preč z čakárne | " + msg.getPatient());
 
-        if (mySim().animatorExists()) {
-            Utils.moveAlongPath(patient, 200, mySim().currentTime(),
-                    Utils.p2d(ambulance.getXInside(), ambulance.getYInside()),
-                    Utils.p2d(ambulance.getXDoor(), ambulance.getYDoor()),
-                    ambulance.getType() == 'A' ? Utils.p2d(380, 372) : Utils.p2d(833, 372),
-                    Utils.p2d(380, 372),
-                    Utils.p2d(380, 693)
+        msg.setAddressee(myAgent().findAssistant(Id.processMoveExitPatient));
+        startContinualAssistant(msg);
 
-            );
-        }
+        MyMessage copyMessage = (MyMessage) message.createCopy();
+        copyMessage.setCode(Mc.releaseMedicalResources);
+        copyMessage.setAddressee(mySim().findAgent(Id.agentResources));
 
-        msg.setCode(Mc.releaseMedicalResources);
-        msg.setAddressee(mySim().findAgent(Id.agentResources));
-
-        notice(msg);
-
-        //startContinualAssistant(myAgent().findAssistant(Mc.));
-
-        // DOROBIT HOLD DO NOVEHO PROCESU A V NOVOM FINISH DAT RESPONSE
+        notice(copyMessage);
     }
 
 	//meta! sender="AgentResources", id="114", type="Response"
@@ -203,8 +190,8 @@ public class ManagerHospital extends OSPABA.Manager
         request(msg);
 	}
 
-    //meta! sender="ProcessMoveAmbulancePatient", id="136", type="Finish"
-    public void processFinishProcessMoveAmbulancePatient(MessageForm message)
+	//meta! sender="ProcessMoveAmbulancePatient", id="136", type="Finish"
+	public void processFinishProcessMoveAmbulancePatient(MessageForm message)
     {
         MyMessage msg = (MyMessage) message;
 
@@ -224,6 +211,15 @@ public class ManagerHospital extends OSPABA.Manager
 		}
 	}
 
+	//meta! sender="ProcessMoveExitPatient", id="142", type="Finish"
+	public void processFinishProcessMoveExitPatient(MessageForm message)
+	{
+        MyMessage msg = (MyMessage) message;
+
+        msg.setCode(Mc.patientCare);
+        response(msg);
+	}
+
 	//meta! userInfo="Generated code: do not modify", tag="begin"
 	public void init()
 	{
@@ -234,37 +230,41 @@ public class ManagerHospital extends OSPABA.Manager
 	{
 		switch (message.code())
 		{
-		case Mc.requestEntranceResources:
-			processRequestEntranceResources(message);
-		break;
+		case Mc.finish:
+			switch (message.sender().id())
+			{
+			case Id.processMoveEntrancePatient:
+				processFinishProcessMoveEntrancePatient(message);
+			break;
 
-		case Mc.requestMedicalResources:
-			processRequestMedicalResources(message);
-		break;
+			case Id.processMoveExitPatient:
+				processFinishProcessMoveExitPatient(message);
+			break;
 
-		case Mc.patientCare:
-			processPatientCare(message);
+			case Id.processMoveAmbulancePatient:
+				processFinishProcessMoveAmbulancePatient(message);
+			break;
+			}
 		break;
 
 		case Mc.medicalExamination:
 			processMedicalExamination(message);
 		break;
 
-		case Mc.finish:
-			switch (message.sender().id())
-			{
-			case Id.processMoveAmbulancePatient:
-				processFinishProcessMoveAmbulancePatient(message);
-			break;
-
-			case Id.processMoveEntrancePatient:
-				processFinishProcessMoveEntrancePatient(message);
-			break;
-			}
-		break;
-
 		case Mc.entranceExamination:
 			processEntranceExamination(message);
+		break;
+
+		case Mc.patientCare:
+			processPatientCare(message);
+		break;
+
+		case Mc.requestEntranceResources:
+			processRequestEntranceResources(message);
+		break;
+
+		case Mc.requestMedicalResources:
+			processRequestMedicalResources(message);
 		break;
 
 		default:

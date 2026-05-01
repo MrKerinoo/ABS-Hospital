@@ -20,6 +20,7 @@ public class Id extends OSPABA.IdList
 	public static final int processMoveAmbulancePatient = 1007;
 	public static final int schedulerWalk = 1001;
 	public static final int schedulerAmbulanceCar = 1002;
+	public static final int processMoveExitPatient = 1008;
 	public static final int processMovePersonnel = 1003;
 	public static final int processEntranceExam = 1004;
 	public static final int processMedicalExam = 1005;

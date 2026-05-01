@@ -54,6 +54,7 @@ public class AgentHospital extends OSPABA.Agent
 	{
 		new ManagerHospital(Id.managerHospital, mySim(), this);
 		new ProcessMoveAmbulancePatient(Id.processMoveAmbulancePatient, mySim(), this);
+		new ProcessMoveExitPatient(Id.processMoveExitPatient, mySim(), this);
 		new ProcessMoveEntrancePatient(Id.processMoveEntrancePatient, mySim(), this);
 		addOwnMessage(Mc.patientCare);
 		addOwnMessage(Mc.entranceExamination);

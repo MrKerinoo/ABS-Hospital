@@ -120,8 +120,8 @@ public class AgentResources extends OSPABA.Agent
 		new ManagerResources(Id.managerResources, mySim(), this);
 		new ProcessMovePersonnel(Id.processMovePersonnel, mySim(), this);
 		addOwnMessage(Mc.releaseEntranceResources);
-		addOwnMessage(Mc.releaseMedicalResources);
 		addOwnMessage(Mc.requestMedicalResources);
+		addOwnMessage(Mc.releaseMedicalResources);
 		addOwnMessage(Mc.requestEntranceResources);
 	}
 	//meta! tag="end"

@@ -8,10 +8,10 @@ import agents.agenthospital.*;
 import OSPABA.Process;
 import utils.Utils;
 
-//meta! id="135"
-public class ProcessMoveAmbulancePatient extends OSPABA.Process
+//meta! id="141"
+public class ProcessMoveExitPatient extends OSPABA.Process
 {
-	public ProcessMoveAmbulancePatient(int id, Simulation mySim, CommonAgent myAgent)
+	public ProcessMoveExitPatient(int id, Simulation mySim, CommonAgent myAgent)
 	{
 		super(id, mySim, myAgent);
 	}
@@ -23,26 +23,29 @@ public class ProcessMoveAmbulancePatient extends OSPABA.Process
 		// Setup component for the next replication
 	}
 
-	//meta! sender="AgentHospital", id="136", type="Start"
+	//meta! sender="AgentHospital", id="142", type="Start"
 	public void processStart(MessageForm message)
 	{
         MyMessage msg = (MyMessage) message;
 
-        double duration = myAgent().getAmbulanceMoveGenerator().randDouble();
+        double duration = myAgent().getWalkEntranceMoveGenerator().randDouble();
 
         Patient patient = msg.getPatient();
         Ambulance ambulance = msg.getAmbulance();
 
         if (mySim().animatorExists()) {
             Utils.moveAlongPath(patient, duration, mySim().currentTime(),
-                    Utils.p2d(ambulance.getXDoor(), ambulance.getYDoor()),
                     Utils.p2d(ambulance.getXInside(), ambulance.getYInside()),
-                    Utils.p2d(ambulance.getXPatient(), ambulance.getYPatient())
+                    Utils.p2d(ambulance.getXDoor(), ambulance.getYDoor()),
+                    ambulance.getType() == 'A' ? Utils.p2d(380, 372) : Utils.p2d(833, 372),
+                    Utils.p2d(380, 372),
+                    Utils.p2d(380, 693)
+
             );
         }
 
         message.setCode(Mc.finish);
-        hold(duration, message);
+        hold(duration , message);
 	}
 
 	//meta! userInfo="Process messages defined in code", id="0"

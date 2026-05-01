@@ -28,8 +28,12 @@ public class ManagerEnvironment extends OSPABA.Manager
 	//meta! sender="AgentBoss", id="57", type="Notice"
 	public void processPatientExit(MessageForm message)
 	{
+        MyMessage msg = (MyMessage) message;
         // UPDATE STATISTICS
 
+        if (mySim().animatorExists()) {
+            msg.getPatient().remove();
+        }
 	}
 
 	//meta! sender="SchedulerWalk", id="9", type="Finish"
@@ -122,25 +126,25 @@ public class ManagerEnvironment extends OSPABA.Manager
 	{
 		switch (message.code())
 		{
-		case Mc.finish:
-			switch (message.sender().id())
-			{
-			case Id.schedulerAmbulanceCar:
-				processFinishSchedulerAmbulanceCar(message);
-			break;
-
-			case Id.schedulerWalk:
-				processFinishSchedulerWalk(message);
-			break;
-			}
-		break;
-
 		case Mc.noticeInit:
 			processNoticeInit(message);
 		break;
 
 		case Mc.patientExit:
 			processPatientExit(message);
+		break;
+
+		case Mc.finish:
+			switch (message.sender().id())
+			{
+			case Id.schedulerWalk:
+				processFinishSchedulerWalk(message);
+			break;
+
+			case Id.schedulerAmbulanceCar:
+				processFinishSchedulerAmbulanceCar(message);
+			break;
+			}
 		break;
 
 		default:
