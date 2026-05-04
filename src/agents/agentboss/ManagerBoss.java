@@ -40,7 +40,10 @@ public class ManagerBoss extends OSPABA.Manager
         message.setCode(Mc.patientCare);
         message.setAddressee(mySim().findAgent(Id.agentHospital));
 
-        System.out.println(mySim().currentTime() + " | Požiadanie o vykonanie vyšetrenia | " + msg.getPatient());
+        if (!mySim().isMaxSpeed()) {
+            ((MySimulation) mySim()).logEvent(" | Požiadanie o vykonanie vyšetrenia | " + msg.getPatient());
+            System.out.println(mySim().currentTime() + " | Požiadanie o vykonanie vyšetrenia | " + msg.getPatient());
+        }
 
         request(message);
 	}

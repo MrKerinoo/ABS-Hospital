@@ -36,7 +36,10 @@ public class ProcessMedicalExam extends OSPABA.Process
             duration = myAgent().getMedicalExamWalkGenerator().randDouble();
         }
 
-        System.out.println(mySim().currentTime() + " | Začiatok lekárskeho ošetrenia | " + msg.getPatient());
+        if (!mySim().isMaxSpeed()) {
+            ((MySimulation) mySim()).logEvent(" | Začiatok lekárskeho ošetrenia | " + msg.getPatient());
+            System.out.println(mySim().currentTime() + " | Začiatok lekárskeho ošetrenia | " + msg.getPatient());
+        }
 
         msg.setCode(Mc.finish);
         hold(duration, msg);

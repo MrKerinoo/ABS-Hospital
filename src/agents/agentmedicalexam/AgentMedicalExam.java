@@ -30,13 +30,13 @@ public class AgentMedicalExam extends OSPABA.Agent
 
         Random seedRandom = ((MySimulation) mySim()).getSeedRandom();
 
-        Interval i1 = new Interval(10, 12, 0.1);
-        Interval i2 = new Interval(12, 14, 0.6);
-        Interval i3 = new Interval(14, 18, 0.3);
+        Interval i1 = new Interval(600, 720, 0.1);
+        Interval i2 = new Interval(720, 840, 0.6);
+        Interval i3 = new Interval(840, 1080, 0.3);
 
         medicalExamWalkGenerator = new EmpiricalGenerator(seedRandom, List.of(i1, i2, i3), List.of());
-        medicalExamAmbulanceCarGenerator = new ContinuousGenerator(seedRandom, 15, 30);
-	}
+        medicalExamAmbulanceCarGenerator = new ContinuousGenerator(seedRandom, 900, 1800);
+    }
 
 	//meta! userInfo="Generated code: do not modify", tag="begin"
 	private void init()

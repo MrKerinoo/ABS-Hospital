@@ -40,13 +40,13 @@ public class ControlPanel extends JPanel implements ISimDelegate {
 
         // Control components
         btnStart = new JButton("Spustiť");
-        txtReplications = new JTextField("1", 4);
+        txtReplications = new JTextField("1000", 4);
         txtReplications.setMaximumSize(txtReplications.getPreferredSize());
 
         // Resource configuration
-        txtNurses = new JTextField("5", 3);
+        txtNurses = new JTextField("8", 3);
         txtNurses.setMaximumSize(txtNurses.getPreferredSize());
-        txtDoctors = new JTextField("3", 3);
+        txtDoctors = new JTextField("6", 3);
         txtDoctors.setMaximumSize(txtDoctors.getPreferredSize());
 
         // Visualization and speed settings
@@ -99,6 +99,8 @@ public class ControlPanel extends JPanel implements ISimDelegate {
 
         setupListeners();
         core.registerDelegate(this);
+
+        this.updateButtonStates(SimState.stopped);
     }
 
     private void setupListeners() {
@@ -178,7 +180,6 @@ public class ControlPanel extends JPanel implements ISimDelegate {
         if (chkVisualization.isSelected() || core.currentReplication() % 50 == 0) {
             SwingUtilities.invokeLater(() -> {
                 lblSimTime.setText(Utils.formatSimTime(core.currentTime()));
-                lblReplications.setText("Replikácie: " + core.currentReplication() + "/" + txtReplications.getText());
             });
         }
     }
@@ -186,6 +187,8 @@ public class ControlPanel extends JPanel implements ISimDelegate {
     @Override
     public void simStateChanged(Simulation sim, SimState simState) {
         SwingUtilities.invokeLater(() -> {
+            updateButtonStates(simState); // Aktualizácia dostupnosti tlačidiel
+
             switch (simState) {
                 case stopped:
                     btnStart.setText("Spustiť");
@@ -195,9 +198,57 @@ public class ControlPanel extends JPanel implements ISimDelegate {
                     btnPause.setText("Obnoviť");
                     break;
                 case running:
-                    btnPause.setText("Pozastaviť");
+                    break;
+                case replicationRunning:
+
+                    break;
+                case replicationStopped:
+                    this.updateAfterRepl();
                     break;
             }
+
+
+
+            if (sim.isPaused()) {
+                btnPause.setText("Pokračovať");
+            } else {
+                btnPause.setText("Pozastaviť");
+            }
+        });
+    }
+
+    private void updateButtonStates(SimState state) {
+        switch (state) {
+            case stopped:
+                btnStart.setEnabled(true);
+                btnPause.setEnabled(false);
+                btnStop.setEnabled(false);
+
+                txtReplications.setEnabled(true);
+                txtNurses.setEnabled(true);
+                txtDoctors.setEnabled(true);
+                break;
+            case running:
+                break;
+            case replicationRunning:
+                btnStart.setEnabled(false);
+                btnPause.setEnabled(true);
+                btnStop.setEnabled(true);
+                txtReplications.setEnabled(false);
+                txtNurses.setEnabled(false);
+                txtDoctors.setEnabled(false);
+                break;
+            case paused:
+                btnStart.setEnabled(false);
+                btnPause.setEnabled(true);
+                btnStop.setEnabled(true);
+                break;
+        }
+    }
+
+    private void updateAfterRepl() {
+        SwingUtilities.invokeLater(() -> {
+            lblReplications.setText("Replikácie: " + core.currentReplication() + "/" + txtReplications.getText());
         });
     }
 }

@@ -101,7 +101,11 @@ public class ProcessMovePersonnel extends OSPABA.Process
             }
         }
 
-        System.out.println(mySim().currentTime() + " | Začiatok presunu zamestnancov | " + durationNurse +  " | " + msg.getPatient() );
+
+        if (!mySim().isMaxSpeed()) {
+            ((MySimulation) mySim()).logEvent(" | Začiatok presunu zamestnancov | " + durationNurse +  " | " + msg.getPatient());
+            System.out.println(mySim().currentTime() + " | Začiatok presunu zamestnancov | " + durationNurse +  " | " + msg.getPatient());
+        }
 
         message.setCode(Mc.finish);
         hold(Math.max(durationNurse, durationDoctor), msg);

@@ -38,7 +38,10 @@ public class ManagerMedicalExam extends OSPABA.Manager
     {
         MyMessage msg = (MyMessage) message;
 
-        System.out.println(mySim().currentTime() + " | Koniec lekárskeho ošetrenia | " + msg.getPatient());
+        if (!mySim().isMaxSpeed()) {
+            ((MySimulation) mySim()).logEvent(" | Koniec lekárskeho ošetrenia | " + msg.getPatient());
+            System.out.println(mySim().currentTime() + " | Koniec lekárskeho ošetrenia | " + msg.getPatient());
+        }
 
         message.setCode(Mc.medicalExamination);
         response(message);

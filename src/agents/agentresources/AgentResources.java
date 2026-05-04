@@ -9,6 +9,8 @@ import entities.Doctor;
 import entities.Nurse;
 import generators.ContinuousGenerator;
 import generators.TriangularGenerator;
+import statistics.TimeStatistics;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.PriorityQueue;
@@ -30,8 +32,21 @@ public class AgentResources extends OSPABA.Agent
     PriorityQueue<MessageForm> waitingAmbulanceARequests;
     PriorityQueue<MessageForm> waitingAmbulanceBRequests;
 
+    // GENERATORS
+
     private ContinuousGenerator entranceAmbulanceMoveGenerator;
     private TriangularGenerator ambulanceMoveGenerator;
+
+    // STATISTICS
+
+    // Priemerné vyťaženie lekárov
+    private TimeStatistics doctorUsage;
+    // Priemerné vyťaženie sestričiek
+    private TimeStatistics nurseUsage;
+    // Priemerné vyťaženie ambulancií typu A
+    private TimeStatistics ambulanceAUsage;
+    // Priemerné vyťaženie ambulancií typu B
+    private TimeStatistics ambulanceBUsage;
 
 	public AgentResources(int id, Simulation mySim, Agent parent)
 	{
@@ -60,8 +75,13 @@ public class AgentResources extends OSPABA.Agent
 
         Random seedRandom = ((MySimulation) mySim()).getSeedRandom();
 
-        entranceAmbulanceMoveGenerator = new ContinuousGenerator(seedRandom, 150, 240);
+        entranceAmbulanceMoveGenerator = new ContinuousGenerator(seedRandom, 90, 200);
         ambulanceMoveGenerator = new TriangularGenerator(seedRandom, 15, 45, 20);
+
+        doctorUsage = new TimeStatistics((MySimulation) mySim());
+        nurseUsage = new TimeStatistics((MySimulation) mySim());
+        ambulanceAUsage = new TimeStatistics((MySimulation) mySim());
+        ambulanceBUsage = new TimeStatistics((MySimulation) mySim());
 
         for (int i = 0; i < ((MySimulation)mySim()).getNursesCount(); i++) {
             Nurse n = new Nurse(i);
@@ -71,10 +91,10 @@ public class AgentResources extends OSPABA.Agent
             if(mySim().animatorExists()) {
                 mySim().animator().register(n);
 
-                if (i < 7) {
+                if (i < 6) {
                     n.setPosition(1422 + (i * 45), 568);
                 } else {
-                    n.setPosition(1422 + ((i - 7) * 45), 626);
+                    n.setPosition(1422 + ((i - 6) * 45), 626);
                 }
             }
         }
@@ -87,10 +107,10 @@ public class AgentResources extends OSPABA.Agent
             if(mySim().animatorExists()) {
                 mySim().animator().register(d);
 
-                if (i < 7) {
+                if (i < 6) {
                     d.setPosition(1422 + (i * 45), 450);
                 } else {
-                    d.setPosition(1422 + ((i - 7) * 45), 509);
+                    d.setPosition(1422 + ((i - 6) * 45), 509);
                 }
 
             }
@@ -173,5 +193,37 @@ public class AgentResources extends OSPABA.Agent
 
     public TriangularGenerator getAmbulanceMoveGenerator() {
         return ambulanceMoveGenerator;
+    }
+
+    public TimeStatistics getDoctorUsage() {
+        return doctorUsage;
+    }
+
+    public TimeStatistics getNurseUsage() {
+        return nurseUsage;
+    }
+
+    public TimeStatistics getAmbulanceAUsage() {
+        return ambulanceAUsage;
+    }
+
+    public TimeStatistics getAmbulanceBUsage() {
+        return ambulanceBUsage;
+    }
+
+    public void recordDoctorUsage() {
+        doctorUsage.add((double)(allDoctors.size() - freeDoctors.size()) / allDoctors.size());
+    }
+
+    public void recordNurseUsage() {
+        nurseUsage.add((double)(allNurses.size() - freeNurses.size()) / allNurses.size());
+    }
+
+    public void recordAmbulanceAUsage() {
+        ambulanceAUsage.add((double)(allAmbulancesA.size() - freeAmbulancesA.size()) / allAmbulancesA.size());
+    }
+
+    public void recordAmbulanceBUsage() {
+        ambulanceBUsage.add((double)(allAmbulancesB.size() - freeAmbulancesB.size()) / allAmbulancesB.size());
     }
 }

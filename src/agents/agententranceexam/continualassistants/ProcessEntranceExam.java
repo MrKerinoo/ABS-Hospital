@@ -41,7 +41,11 @@ public class ProcessEntranceExam extends OSPABA.Process
 
         patient.setPriority(priority);
 
-        System.out.println(mySim().currentTime() + " | Začiatok vstupného vyšetrenia | " + msg.getPatient());
+
+        if (!mySim().isMaxSpeed()) {
+            ((MySimulation) mySim()).logEvent(" | Začiatok vstupného vyšetrenia | " + msg.getPatient());
+            System.out.println(mySim().currentTime() + " | Začiatok vstupného vyšetrenia | " + msg.getPatient());
+        }
 
         msg.setCode(Mc.finish);
         hold(duration, msg);

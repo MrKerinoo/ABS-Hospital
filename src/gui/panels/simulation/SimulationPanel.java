@@ -3,8 +3,7 @@ package gui.panels.simulation;
 import OSPABA.ISimDelegate;
 import OSPABA.SimState;
 import OSPABA.Simulation;
-import comparators.EntranceExamComparator;
-import comparators.MedicalExamComparator;
+import comparators.ResourceComparator;
 import entities.Ambulance;
 import simulation.MySimulation;
 
@@ -23,14 +22,18 @@ public class SimulationPanel extends JPanel implements ISimDelegate {
     private QueuePanel medicalQueuePanel;
     private PersonnelPanel doctorsPanel;
     private PersonnelPanel nursesPanel;
+    private StatisticsPanel statisticsPanel;
+    private LoggerPanel loggerPanel; // Added LoggerPanel
 
     public SimulationPanel(MySimulation core) {
         this.core = core;
         this.setLayout(new BorderLayout());
 
         // Initial GUI setup
-        setupLayout();
+        this.statisticsPanel = new StatisticsPanel(core);
+        this.loggerPanel = new LoggerPanel(core); // Initialize logger
 
+        setupLayout();
         core.registerDelegate(this);
     }
 
@@ -39,12 +42,23 @@ public class SimulationPanel extends JPanel implements ISimDelegate {
     private void setupLayout() {
         this.removeAll();
 
-        // Wrapper for content that stacks sections vertically
+        // Main vertical wrapper
         JPanel topWrapper = new JPanel();
         topWrapper.setLayout(new BoxLayout(topWrapper, BoxLayout.Y_AXIS));
 
+        // Section 1: Ambulances
         topWrapper.add(createAmbulanceSection());
+
+        // Section 2: Queues and Personnel
         topWrapper.add(createQueuesSection());
+
+        // Section 3: Statistics
+        topWrapper.add(Box.createVerticalStrut(10));
+        topWrapper.add(statisticsPanel);
+
+        // Section 4: Logger
+        topWrapper.add(Box.createVerticalStrut(10));
+        topWrapper.add(loggerPanel);
 
         JPanel scrollContent = new JPanel(new BorderLayout());
         scrollContent.add(topWrapper, BorderLayout.NORTH);
@@ -120,8 +134,6 @@ public class SimulationPanel extends JPanel implements ISimDelegate {
         return container;
     }
 
-
-
     // --- Logic & Updates ---
 
     @Override
@@ -140,30 +152,56 @@ public class SimulationPanel extends JPanel implements ISimDelegate {
                 if (i < listB.size()) panelsB.get(i).refresh(listB.get(i));
             }
 
-            // --- Update Queues (Pacienti) ---
+            // --- Update Queues ---
             entranceQueuePanel.refresh(
                     core.agentHospital().getEntranceQueue(),
-                    new EntranceExamComparator()
+                    new ResourceComparator()
             );
             medicalQueuePanel.refresh(
                     core.agentHospital().getMedicalTypeBQueue(),
-                    new MedicalExamComparator()
+                    new ResourceComparator()
             );
 
-            // --- Update Personnel (Personál) ---
+            // --- Update Personnel ---
             if (doctorsPanel != null) {
                 doctorsPanel.refresh(core.agentResources().getAllDoctors());
             }
             if (nursesPanel != null) {
                 nursesPanel.refresh(core.agentResources().getAllNurses());
             }
+
+            // --- Update Statistics ---
+            if (statisticsPanel != null) {
+                statisticsPanel.refreshLocalStatistics();
+            }
         });
     }
 
     @Override
     public void simStateChanged(Simulation sim, SimState simState) {
-        if (simState == SimState.replicationRunning) {
-            SwingUtilities.invokeLater(this::setupLayout);
+        switch (simState) {
+            case running:
+                break;
+
+            case replicationRunning:
+                if (loggerPanel != null) {
+                    loggerPanel.clearLog();
+                }
+                SwingUtilities.invokeLater(this::setupLayout);
+                break;
+
+            case replicationStopped:
+                this.statisticsPanel.refreshGlobalStatistics();
+                break;
+
+            case stopped:
+                break;
+        }
+    }
+
+    public void log(String message) {
+        if (loggerPanel != null) {
+            loggerPanel.addMessage(message);
         }
     }
 }

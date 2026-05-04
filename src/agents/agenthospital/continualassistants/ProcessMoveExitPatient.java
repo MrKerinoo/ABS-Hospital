@@ -28,7 +28,7 @@ public class ProcessMoveExitPatient extends OSPABA.Process
 	{
         MyMessage msg = (MyMessage) message;
 
-        double duration = myAgent().getWalkEntranceMoveGenerator().randDouble();
+        double duration = myAgent().getExitMoveGenerator().randDouble();
 
         Patient patient = msg.getPatient();
         Ambulance ambulance = msg.getAmbulance();

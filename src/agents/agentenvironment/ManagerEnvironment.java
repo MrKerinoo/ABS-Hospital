@@ -31,6 +31,21 @@ public class ManagerEnvironment extends OSPABA.Manager
         MyMessage msg = (MyMessage) message;
         // UPDATE STATISTICS
 
+        Patient patient = msg.getPatient();
+
+        double duration = mySim().currentTime() - patient.getArrivalTime();
+
+        myAgent().setPatientsOut(myAgent().getPatientsOut() + 1);
+        myAgent().getTimeInSystem().add(duration);
+
+        if (patient.isWithAmbulance()) {
+            myAgent().getTimeInSystemAmbulance().add(duration);
+            myAgent().setPatientsOutAmbulance(myAgent().getPatientsOutAmbulance() + 1);
+        } else {
+            myAgent().getTimeInSystemWalk().add(duration);
+            myAgent().setPatientsOutWalk(myAgent().getPatientsOutWalk() + 1);
+        }
+
         if (mySim().animatorExists()) {
             msg.getPatient().remove();
         }
@@ -55,7 +70,12 @@ public class ManagerEnvironment extends OSPABA.Manager
         message.setAddressee(Id.agentBoss);
 
         myAgent().setPatientsIn(myAgent().getPatientsIn() + 1);
-        System.out.println(mySim().currentTime() + " | Príchod pacienta | " + patient);
+        myAgent().setPatientsInWalk(myAgent().getPatientsInWalk() + 1);
+
+        if (!mySim().isMaxSpeed()) {
+            ((MySimulation) mySim()).logEvent(" | Príchod pacienta | " + patient);
+            System.out.println(mySim().currentTime() + " | Príchod pacienta | " + patient);
+        }
 
         msg.setPatient(patient);
         notice(message);
@@ -81,8 +101,12 @@ public class ManagerEnvironment extends OSPABA.Manager
         message.setAddressee(Id.agentBoss);
 
         myAgent().setPatientsIn(myAgent().getPatientsIn() + 1);
-        System.out.println(mySim().currentTime() + " | Príchod pacienta | " + patient);
+        myAgent().setPatientsInAmbulance(myAgent().getPatientsInAmbulance() + 1);
 
+        if (!mySim().isMaxSpeed()) {
+            ((MySimulation) mySim()).logEvent(" | Príchod pacienta | " + patient);
+            System.out.println(mySim().currentTime() + " | Príchod pacienta | " + patient);
+        }
 
         patient.setArrivalTime(mySim().currentTime());
         patient.setWithAmbulance(true);

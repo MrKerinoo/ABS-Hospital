@@ -21,7 +21,7 @@ public class QueuePanel extends JPanel {
         this.showPriority = showPriority;
         this.setLayout(new BorderLayout());
         this.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
-        this.setPreferredSize(new Dimension(450, 400));
+        this.setPreferredSize(new Dimension(450, 250));
 
         // Model
         this.tableModel = new DefaultTableModel(columns, 0) {

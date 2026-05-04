@@ -41,7 +41,10 @@ public class ManagerEntranceExam extends OSPABA.Manager
 	{
         MyMessage msg = (MyMessage) message;
 
-        System.out.println(mySim().currentTime() + " | Koniec vstupného vyšetrenia | " + msg.getPatient());
+        if (!mySim().isMaxSpeed()) {
+            ((MySimulation) mySim()).logEvent(" | Koniec vstupného vyšetrenia | " + msg.getPatient());
+            System.out.println(mySim().currentTime() + " | Koniec vstupného vyšetrenia | " + msg.getPatient());
+        }
 
         message.setCode(Mc.entranceExamination);
 

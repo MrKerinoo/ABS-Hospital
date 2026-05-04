@@ -31,11 +31,11 @@ public class AgentEntranceExam extends OSPABA.Agent
 
         Random seedRandom = ((MySimulation) mySim()).getSeedRandom();
 
-        Interval i1 = new Interval(3, 5, 0.6);
-        Interval i2 = new Interval(5, 9, 0.4);
+        Interval i1 = new Interval(180, 300, 0.6);
+        Interval i2 = new Interval(300, 540, 0.4);
 
         entranceExamWalkGenerator = new EmpiricalGenerator(seedRandom, List.of(i1, i2), List.of());
-        entranceExamAmbulanceCarGenerator = new DiscreteGenerator(seedRandom, 4, 8);
+        entranceExamAmbulanceCarGenerator = new DiscreteGenerator(seedRandom, 240, 480);
 
         Interval w1 = new Interval(1, 2, 0.1);
         Interval w2 = new Interval(2, 3, 0.2);
@@ -45,11 +45,11 @@ public class AgentEntranceExam extends OSPABA.Agent
 
         priorityWalkGenerator = new EmpiricalGenerator(seedRandom, List.of(), List.of(w1,w2,w3,w4,w5));
 
-        Interval a1 = new Interval(1, 2, 0.1);
-        Interval a2 = new Interval(2, 3, 0.2);
-        Interval a3 = new Interval(3, 4, 0.15);
-        Interval a4 = new Interval(4, 5, 0.25);
-        Interval a5 = new Interval(5, 6, 0.3);
+        Interval a1 = new Interval(1, 2, 0.3);
+        Interval a2 = new Interval(2, 3, 0.25);
+        Interval a3 = new Interval(3, 4, 0.2);
+        Interval a4 = new Interval(4, 5, 0.15);
+        Interval a5 = new Interval(5, 6, 0.1);
 
         priorityAmbulanceCarGenerator = new EmpiricalGenerator(seedRandom, List.of(), List.of(a1,a2,a3,a4,a5));
 	}

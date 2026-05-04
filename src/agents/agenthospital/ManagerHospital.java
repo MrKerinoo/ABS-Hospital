@@ -32,7 +32,10 @@ public class ManagerHospital extends OSPABA.Manager
 	{
         MyMessage msg = (MyMessage) message;
 
-        System.out.println(mySim().currentTime() + " | Pacient sa presúva do čakárne | " + msg.getPatient());
+        if (!mySim().isMaxSpeed()) {
+            ((MySimulation) mySim()).logEvent(" | Pacient sa presúva do čakárne | " + msg.getPatient());
+            System.out.println(mySim().currentTime() + " | Pacient sa presúva do čakárne | " + msg.getPatient());
+        }
 
         msg.setAddressee(myAgent().findAssistant(Id.processMoveEntrancePatient));
         startContinualAssistant(message);
@@ -45,7 +48,11 @@ public class ManagerHospital extends OSPABA.Manager
 
         Patient patient = msg.getPatient();
         Ambulance ambulance = msg.getAmbulance();
-        System.out.println(mySim().currentTime() + " | Pacient sa presúva preč z čakárne | " + msg.getPatient());
+
+        if (!mySim().isMaxSpeed()) {
+            ((MySimulation) mySim()).logEvent(" | Pacient sa presúva preč z čakárne | " + msg.getPatient());
+            System.out.println(mySim().currentTime() + " | Pacient sa presúva preč z čakárne | " + msg.getPatient());
+        }
 
         if (mySim().animatorExists()) {
             Utils.moveAlongPath(patient, 2, mySim().currentTime(),
@@ -55,6 +62,7 @@ public class ManagerHospital extends OSPABA.Manager
             );
         }
 
+        msg.getPatient().setMedicalQueueArrivalTime(mySim().currentTime());
 
         switch (patient.getPriority()) {
             case 1, 2:
@@ -69,11 +77,16 @@ public class ManagerHospital extends OSPABA.Manager
                 break;
         }
 
+        myAgent().incrementMedicalQueue();
+
         MyMessage copyMessage = (MyMessage) msg.createCopy();
         copyMessage.setCode(Mc.releaseEntranceResources);
         copyMessage.setAddressee(mySim().findAgent(Id.agentResources));
 
-        System.out.println(mySim().currentTime() + " | Uvoľnenie zdrojov po vstupnom vyšetrení | " + msg.getPatient());
+        if (!mySim().isMaxSpeed()) {
+            ((MySimulation) mySim()).logEvent(" | Uvoľnenie zdrojov po vstupnom vyšetrení | " + msg.getPatient());
+            System.out.println(mySim().currentTime() + " | Uvoľnenie zdrojov po vstupnom vyšetrení | " + msg.getPatient());
+        }
 
         notice(copyMessage);
 
@@ -84,7 +97,10 @@ public class ManagerHospital extends OSPABA.Manager
         msg.setCode(Mc.requestMedicalResources);
         msg.setAddressee(mySim().findAgent(Id.agentResources));
 
-        System.out.println(mySim().currentTime() + " | Požiadanie o zdroje lekárskeho vyšetrenia | " + msg.getPatient());
+        if (!mySim().isMaxSpeed()) {
+            ((MySimulation) mySim()).logEvent(" | Požiadanie o zdroje lekárskeho vyšetrenia | " + msg.getPatient());
+            System.out.println(mySim().currentTime() + " | Požiadanie o zdroje lekárskeho vyšetrenia | " + msg.getPatient());
+        }
 
         request(msg);
     }
@@ -94,7 +110,10 @@ public class ManagerHospital extends OSPABA.Manager
     {
         MyMessage msg = (MyMessage) message;
 
-        System.out.println(mySim().currentTime() + " | Pacient sa presúva preč z čakárne | " + msg.getPatient());
+        if (!mySim().isMaxSpeed()) {
+            ((MySimulation) mySim()).logEvent(" | Pacient sa presúva preč z čakárne | " + msg.getPatient());
+            System.out.println(mySim().currentTime() + " | Pacient sa presúva preč z čakárne | " + msg.getPatient());
+        }
 
         msg.setAddressee(myAgent().findAssistant(Id.processMoveExitPatient));
         startContinualAssistant(msg);
@@ -112,7 +131,21 @@ public class ManagerHospital extends OSPABA.Manager
         MyMessage msg = (MyMessage) message;
 
         myAgent().getEntranceQueue().remove(msg);
-        System.out.println(mySim().currentTime() + " | Pacient vstupuje do ambulancie |" + msg.getPatient());
+        double waitTime = mySim().currentTime() - msg.getPatient().getEntranceQueueArrivalTime();
+
+        myAgent().getEntranceQueueLength().add(myAgent().getEntranceQueue().size());
+        myAgent().getWaitEntrance().add(waitTime);
+
+        if (msg.getPatient().isWithAmbulance()) {
+            myAgent().getWaitEntranceAmbulance().add(waitTime);
+        } else {
+            myAgent().getWaitEntranceWalk().add(waitTime);
+        }
+
+        if (!mySim().isMaxSpeed()) {
+            ((MySimulation) mySim()).logEvent(" | Pacient vstupuje do ambulancie |" + msg.getPatient());
+            System.out.println(mySim().currentTime() + " | Pacient vstupuje do ambulancie |" + msg.getPatient());
+        }
 
         Patient patient = msg.getPatient();
         Ambulance ambulance = msg.getAmbulance();
@@ -143,12 +176,18 @@ public class ManagerHospital extends OSPABA.Manager
         Patient patient = msg.getPatient();
         Ambulance ambulance = msg.getAmbulance();
 
-        if (ambulance.getType() == 'A') {
-            myAgent().getMedicalTypeAQueue().poll();
-            myAgent().getMedicalTypeBQueue().remove(msg);
+        myAgent().getMedicalTypeAQueue().remove(msg);
+        myAgent().getMedicalTypeBQueue().remove(msg);
+
+        double waitTime = mySim().currentTime() - patient.getMedicalQueueArrivalTime();
+
+        myAgent().decrementMedicalQueue();
+        myAgent().getWaitMedical().add(waitTime);
+
+        if (patient.isWithAmbulance()) {
+            myAgent().getWaitMedicalAmbulance().add(waitTime);
         } else {
-            myAgent().getMedicalTypeBQueue().poll();
-            myAgent().getMedicalTypeAQueue().remove(msg);
+            myAgent().getWaitMedicalWalk().add(waitTime);
         }
 
         msg.getAmbulance().setPatient(patient);
@@ -158,7 +197,10 @@ public class ManagerHospital extends OSPABA.Manager
 
             startContinualAssistant(msg);
         } else {
-            System.out.println(mySim().currentTime() + " | Pacient vstupuje do ambulancie |" + msg.getPatient());
+            if (!mySim().isMaxSpeed()) {
+                ((MySimulation) mySim()).logEvent(" | Pacient vstupuje do ambulancie |" + msg.getPatient());
+                System.out.println(mySim().currentTime() + " | Pacient vstupuje do ambulancie |" + msg.getPatient());
+            }
 
             if (mySim().animatorExists()) {
                 Utils.moveAlongPath(patient, 2, mySim().currentTime(),
@@ -180,12 +222,19 @@ public class ManagerHospital extends OSPABA.Manager
 	{
         MyMessage msg = (MyMessage) message;
 
+        msg.getPatient().setEntranceQueueArrivalTime(mySim().currentTime());
+
         myAgent().getEntranceQueue().add(msg);
+
+        myAgent().getEntranceQueueLength().add(myAgent().getEntranceQueue().size());
 
         msg.setCode(Mc.requestEntranceResources);
         msg.setAddressee(mySim().findAgent(Id.agentResources));
 
-        System.out.println(mySim().currentTime() + " | Požiadanie o zdroje vstupného vyšetrenia| " + msg.getPatient());
+        if (!mySim().isMaxSpeed()) {
+            ((MySimulation) mySim()).logEvent(" | Požiadanie o zdroje vstupného vyšetrenia| " + msg.getPatient());
+            System.out.println(mySim().currentTime() + " | Požiadanie o zdroje vstupného vyšetrenia| " + msg.getPatient());
+        }
 
         request(msg);
 	}
@@ -195,12 +244,24 @@ public class ManagerHospital extends OSPABA.Manager
     {
         MyMessage msg = (MyMessage) message;
 
-        System.out.println(mySim().currentTime() + " | Pacient vstupuje do ambulancie |" + msg.getPatient());
+        if (!mySim().isMaxSpeed()) {
+            ((MySimulation) mySim()).logEvent(" | Pacient vstupuje do ambulancie |" + msg.getPatient());
+            System.out.println(mySim().currentTime() + " | Pacient vstupuje do ambulancie |" + msg.getPatient());
+        }
 
         msg.setCode(Mc.medicalExamination);
         msg.setAddressee(mySim().findAgent(Id.agentMedicalExam));
 
         request(msg);
+    }
+
+    //meta! sender="ProcessMoveExitPatient", id="142", type="Finish"
+    public void processFinishProcessMoveExitPatient(MessageForm message)
+    {
+        MyMessage msg = (MyMessage) message;
+
+        msg.setCode(Mc.patientCare);
+        response(msg);
     }
 
 	//meta! userInfo="Process messages defined in code", id="0"
@@ -209,15 +270,6 @@ public class ManagerHospital extends OSPABA.Manager
 		switch (message.code())
 		{
 		}
-	}
-
-	//meta! sender="ProcessMoveExitPatient", id="142", type="Finish"
-	public void processFinishProcessMoveExitPatient(MessageForm message)
-	{
-        MyMessage msg = (MyMessage) message;
-
-        msg.setCode(Mc.patientCare);
-        response(msg);
 	}
 
 	//meta! userInfo="Generated code: do not modify", tag="begin"

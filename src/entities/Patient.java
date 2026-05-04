@@ -10,12 +10,16 @@ public class Patient extends AnimImageItem {
     private double arrivalTime;
     private boolean withAmbulance;
 
+    private double entranceQueueArrivalTime;
+    private double medicalQueueArrivalTime;
+
     private Ambulance visitedAmbulance;
 
     public Patient (int id) {
         super(Config.IMG_PATIENT, 45, 45);
         setZIndex(1);
         this.id = id;
+        this.priority = 0;
     }
 
     public int getId() {
@@ -38,6 +42,14 @@ public class Patient extends AnimImageItem {
         return visitedAmbulance;
     }
 
+    public double getEntranceQueueArrivalTime() {
+        return entranceQueueArrivalTime;
+    }
+
+    public double getMedicalQueueArrivalTime() {
+        return medicalQueueArrivalTime;
+    }
+
     public void setId(int id) {
         this.id = id;
     }
@@ -56,6 +68,14 @@ public class Patient extends AnimImageItem {
 
     public void setVisitedAmbulance(Ambulance visitedAmbulance) {
         this.visitedAmbulance = visitedAmbulance;
+    }
+
+    public void setEntranceQueueArrivalTime(double entranceQueueArrivalTime) {
+        this.entranceQueueArrivalTime = entranceQueueArrivalTime;
+    }
+
+    public void setMedicalQueueArrivalTime(double medicalQueueArrivalTime) {
+        this.medicalQueueArrivalTime = medicalQueueArrivalTime;
     }
 
     @Override

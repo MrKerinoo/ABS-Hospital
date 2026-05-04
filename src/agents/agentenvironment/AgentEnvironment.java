@@ -14,7 +14,14 @@ public class AgentEnvironment extends OSPABA.Agent
 {
     private int patientsIn;
     private int patientsOut;
+    private int patientsInWalk;
+    private int patientsInAmbulance;
+    private int patientsOutWalk;
+    private int patientsOutAmbulance;
+
     private DiscreteStatistics timeInSystem;
+    private DiscreteStatistics timeInSystemWalk;
+    private DiscreteStatistics timeInSystemAmbulance;
 
     private ExponentialGenerator patientWalkGenerator;
     private ErlangGenerator patientAmbulanceCarGenerator;
@@ -36,12 +43,19 @@ public class AgentEnvironment extends OSPABA.Agent
 
         this.patientsIn = 0;
         this.patientsOut = 0;
+        this.patientsInWalk = 0;
+        this.patientsInAmbulance = 0;
+        this.patientsOutWalk = 0;
+        this.patientsOutAmbulance = 0;
+
         this.timeInSystem = new DiscreteStatistics();
+        this.timeInSystemWalk = new DiscreteStatistics();
+        this.timeInSystemAmbulance = new DiscreteStatistics();
 
         Random seedRandom = ((MySimulation) mySim()).getSeedRandom();
 
-        this.patientWalkGenerator = new ExponentialGenerator(seedRandom, 572.6253);
-        this.patientAmbulanceCarGenerator = new ErlangGenerator(seedRandom, 8, 0.0210);
+        this.patientWalkGenerator = new ExponentialGenerator(seedRandom, 572.6253, 2.0);
+        this.patientAmbulanceCarGenerator = new ErlangGenerator(seedRandom, 8, 0.0210, -13.5462);
         this.patientGenerator = new PatientGenerator();
 	}
 
@@ -76,8 +90,32 @@ public class AgentEnvironment extends OSPABA.Agent
         return patientsOut;
     }
 
+    public int getPatientsInWalk() {
+        return patientsInWalk;
+    }
+
+    public int getPatientsInAmbulance() {
+        return patientsInAmbulance;
+    }
+
+    public int getPatientsOutWalk() {
+        return patientsOutWalk;
+    }
+
+    public int getPatientsOutAmbulance() {
+        return patientsOutAmbulance;
+    }
+
     public DiscreteStatistics getTimeInSystem() {
         return timeInSystem;
+    }
+
+    public DiscreteStatistics getTimeInSystemWalk() {
+        return timeInSystemWalk;
+    }
+
+    public DiscreteStatistics getTimeInSystemAmbulance() {
+        return timeInSystemAmbulance;
     }
 
     public void setPatientsIn(int patientsIn) {
@@ -88,7 +126,19 @@ public class AgentEnvironment extends OSPABA.Agent
         this.patientsOut = patientsOut;
     }
 
-    public void setTimeInSystem(DiscreteStatistics timeInSystem) {
-        this.timeInSystem = timeInSystem;
+    public void setPatientsInWalk(int patientsInWalk) {
+        this.patientsInWalk = patientsInWalk;
+    }
+
+    public void setPatientsInAmbulance(int patientsInAmbulance) {
+        this.patientsInAmbulance = patientsInAmbulance;
+    }
+
+    public void setPatientsOutWalk(int patientsOutWalk) {
+        this.patientsOutWalk = patientsOutWalk;
+    }
+
+    public void setPatientsOutAmbulance(int patientsOutAmbulance) {
+        this.patientsOutAmbulance = patientsOutAmbulance;
     }
 }

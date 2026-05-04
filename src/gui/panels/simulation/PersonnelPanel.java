@@ -21,7 +21,7 @@ public class PersonnelPanel extends JPanel {
         this.personnelType = personnelType;
         this.setLayout(new BorderLayout());
         this.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
-        this.setPreferredSize(new Dimension(450, 400));
+        this.setPreferredSize(new Dimension(450, 250));
 
         this.tableModel = new DefaultTableModel(columns, 0) {
             @Override public boolean isCellEditable(int r, int c) { return false; }

@@ -7,6 +7,7 @@ import agents.agentenvironment.*;
 import agents.agentboss.*;
 import agents.agententranceexam.*;
 import agents.agenthospital.*;
+import gui.panels.simulation.SimulationPanel;
 import statistics.DiscreteStatistics;
 import java.util.Random;
 
@@ -20,6 +21,31 @@ public class MySimulation extends OSPABA.Simulation
     // GLOBAL STATISTICS
 
     private DiscreteStatistics patientsIn;
+    private DiscreteStatistics patientsOut;
+    private DiscreteStatistics patientsInWalk;
+    private DiscreteStatistics patientsInAmbulance;
+    private DiscreteStatistics patientsOutWalk;
+    private DiscreteStatistics patientsOutAmbulance;
+
+    private DiscreteStatistics timeInSystem;
+    private DiscreteStatistics timeInSystemWalk;
+    private DiscreteStatistics timeInSystemAmbulance;
+
+    private DiscreteStatistics entranceQueueLength;
+    private DiscreteStatistics medicalQueueLength;
+
+    private DiscreteStatistics waitEntrance;
+    private DiscreteStatistics waitMedical;
+    private DiscreteStatistics waitEntranceWalk;
+    private DiscreteStatistics waitEntranceAmbulance;
+    private DiscreteStatistics waitMedicalWalk;
+    private DiscreteStatistics waitMedicalAmbulance;
+
+    private DiscreteStatistics doctorUsage;
+    private DiscreteStatistics nurseUsage;
+    private DiscreteStatistics ambulanceAUsage;
+    private DiscreteStatistics ambulanceBUsage;
+
 
 	public MySimulation()
 	{
@@ -36,11 +62,32 @@ public class MySimulation extends OSPABA.Simulation
 		super.prepareSimulation();
 		// Create global statistcis
         patientsIn = new DiscreteStatistics();
+        patientsOut = new DiscreteStatistics();
+        patientsInWalk = new DiscreteStatistics();
+        patientsInAmbulance = new DiscreteStatistics();
+        patientsOutWalk = new DiscreteStatistics();
+        patientsOutAmbulance = new DiscreteStatistics();
 
-        this.random = new Random(1);
+        timeInSystem = new DiscreteStatistics();
+        timeInSystemWalk = new DiscreteStatistics();
+        timeInSystemAmbulance = new DiscreteStatistics();
 
-        this.nursesCount = 5;
-        this.doctorsCount = 3;
+        entranceQueueLength = new DiscreteStatistics();
+        medicalQueueLength = new DiscreteStatistics();
+
+        waitEntrance = new DiscreteStatistics();
+        waitMedical = new DiscreteStatistics();
+        waitEntranceWalk = new DiscreteStatistics();
+        waitEntranceAmbulance = new DiscreteStatistics();
+        waitMedicalWalk = new DiscreteStatistics();
+        waitMedicalAmbulance = new DiscreteStatistics();
+
+        doctorUsage = new DiscreteStatistics();
+        nurseUsage = new DiscreteStatistics();
+        ambulanceAUsage = new DiscreteStatistics();
+        ambulanceBUsage = new DiscreteStatistics();
+
+        this.random = new Random();
 	}
 
 	@Override
@@ -55,6 +102,29 @@ public class MySimulation extends OSPABA.Simulation
 	public void replicationFinished()
 	{
         patientsIn.add(agentEnvironment().getPatientsIn());
+        patientsOut.add(agentEnvironment().getPatientsOut());
+        patientsInWalk.add(agentEnvironment().getPatientsInWalk());
+        patientsInAmbulance.add(agentEnvironment().getPatientsInAmbulance());
+        patientsOutWalk.add(agentEnvironment().getPatientsOutWalk());
+        patientsOutAmbulance.add(agentEnvironment().getPatientsOutAmbulance());
+
+        timeInSystem.add(agentEnvironment().getTimeInSystem().getMean());
+        timeInSystemWalk.add(agentEnvironment().getTimeInSystemWalk().getMean());
+        timeInSystemAmbulance.add(agentEnvironment().getTimeInSystemAmbulance().getMean());
+
+        entranceQueueLength.add(agentHospital().getEntranceQueueLength().getMean());
+        medicalQueueLength.add(agentHospital().getMedicalQueueLength().getMean());
+        waitEntrance.add(agentHospital().getWaitEntrance().getMean());
+        waitMedical.add(agentHospital().getWaitMedical().getMean());
+        waitEntranceWalk.add(agentHospital().getWaitEntranceWalk().getMean());
+        waitEntranceAmbulance.add(agentHospital().getWaitEntranceAmbulance().getMean());
+        waitMedicalWalk.add(agentHospital().getWaitMedicalWalk().getMean());
+        waitMedicalAmbulance.add(agentHospital().getWaitMedicalAmbulance().getMean());
+
+        doctorUsage.add(agentResources().getDoctorUsage().getMean());
+        nurseUsage.add(agentResources().getNurseUsage().getMean());
+        ambulanceAUsage.add(agentResources().getAmbulanceAUsage().getMean());
+        ambulanceBUsage.add(agentResources().getAmbulanceBUsage().getMean());
 
         if (animatorExists()) {
             animator().clearAll();
@@ -68,6 +138,8 @@ public class MySimulation extends OSPABA.Simulation
 	public void simulationFinished()
 	{
 		// Display simulation results
+        if(animator()!=null)animator().clearAll();
+
 		super.simulationFinished();
 	}
 
@@ -131,6 +203,15 @@ public AgentMedicalExam agentMedicalExam()
 	{_agentMedicalExam = agentMedicalExam; }
 	//meta! tag="end"
 
+    public void logEvent(String message) {
+        if (!this.isMaxSpeed()) {
+            for (ISimDelegate delegate : delegates()) {
+                if (delegate instanceof SimulationPanel) {
+                    ((SimulationPanel) delegate).log(message);
+                }
+            }
+        }
+    }
 
     public int getNursesCount() {
         return nursesCount;
@@ -146,5 +227,89 @@ public AgentMedicalExam agentMedicalExam()
 
     public void setDoctorsCount(int doctorsCount) {
         this.doctorsCount = doctorsCount;
+    }
+
+    public DiscreteStatistics getPatientsIn() {
+        return patientsIn;
+    }
+
+    public DiscreteStatistics getPatientsOut() {
+        return patientsOut;
+    }
+
+    public DiscreteStatistics getTimeInSystem() {
+        return timeInSystem;
+    }
+
+    public DiscreteStatistics getEntranceQueueLength() {
+        return entranceQueueLength;
+    }
+
+    public DiscreteStatistics getMedicalQueueLength() {
+        return medicalQueueLength;
+    }
+
+    public DiscreteStatistics getWaitEntrance() {
+        return waitEntrance;
+    }
+
+    public DiscreteStatistics getWaitMedical() {
+        return waitMedical;
+    }
+
+    public DiscreteStatistics getDoctorUsage() {
+        return doctorUsage;
+    }
+
+    public DiscreteStatistics getNurseUsage() {
+        return nurseUsage;
+    }
+
+    public DiscreteStatistics getAmbulanceAUsage() {
+        return ambulanceAUsage;
+    }
+
+    public DiscreteStatistics getAmbulanceBUsage() {
+        return ambulanceBUsage;
+    }
+
+    public DiscreteStatistics getTimeInSystemWalk() {
+        return timeInSystemWalk;
+    }
+
+    public DiscreteStatistics getTimeInSystemAmbulance() {
+        return timeInSystemAmbulance;
+    }
+
+    public DiscreteStatistics getWaitEntranceWalk() {
+        return waitEntranceWalk;
+    }
+
+    public DiscreteStatistics getWaitEntranceAmbulance() {
+        return waitEntranceAmbulance;
+    }
+
+    public DiscreteStatistics getWaitMedicalWalk() {
+        return waitMedicalWalk;
+    }
+
+    public DiscreteStatistics getWaitMedicalAmbulance() {
+        return waitMedicalAmbulance;
+    }
+
+    public DiscreteStatistics getPatientsInWalk() {
+        return patientsInWalk;
+    }
+
+    public DiscreteStatistics getPatientsInAmbulance() {
+        return patientsInAmbulance;
+    }
+
+    public DiscreteStatistics getPatientsOutWalk() {
+        return patientsOutWalk;
+    }
+
+    public DiscreteStatistics getPatientsOutAmbulance() {
+        return patientsOutAmbulance;
     }
 }

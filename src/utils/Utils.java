@@ -3,6 +3,7 @@ package utils;
 import OSPAnimator.Anim;
 import OSPAnimator.AnimImageItem;
 import java.awt.geom.Point2D;
+import java.util.List;
 
 public class Utils {
 
@@ -83,5 +84,38 @@ public class Utils {
         int s = (int) (seconds % 60);
 
         return String.format("Deň %d  %02d:%02d:%02d", days, h, m, s);
+    }
+
+    public static String formatTime(double seconds) {
+        if (Double.isNaN(seconds) || Double.isInfinite(seconds) || seconds <= 0) return "00:00:00";
+        int h = (int)(seconds / 3600);
+        int m = (int)((seconds % 3600) / 60);
+        int s = (int)(seconds % 60);
+        return String.format("%02d:%02d:%02d", h, m, s);
+    }
+
+    public static String formatNum(double value) {
+        if (Double.isNaN(value) || Double.isInfinite(value)) return "0.00";
+        return String.format("%.2f", value);
+    }
+
+    public static String formatIS(List<Double> ci) {
+        if (ci.get(0) == 0.0 && ci.get(1) == 0.0) return "<N/A>";
+        return String.format("<%.2f, %.2f>", ci.get(0), ci.get(1));
+    }
+
+    public static String formatISTime(List<Double> ci) {
+        if (ci.get(0) == 0.0 && ci.get(1) == 0.0) return "<N/A>";
+        return String.format("<%s, %s>", formatTime(ci.get(0)), formatTime(ci.get(1)));
+    }
+
+    public static String formatPercent(double value) {
+        if (Double.isNaN(value) || Double.isInfinite(value)) return "0.00 %";
+        return String.format("%.2f %%", value * 100);
+    }
+
+    public static String formatISPercent(List<Double> ci) {
+        if (ci.get(0) == 0.0 && ci.get(1) == 0.0) return "<N/A>";
+        return String.format("<%.2f %%, %.2f %%>", ci.get(0) * 100, ci.get(1) * 100);
     }
 }
