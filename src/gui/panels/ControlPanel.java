@@ -24,6 +24,7 @@ public class ControlPanel extends JPanel implements ISimDelegate {
     private final JTextField txtDoctors;
     private final JCheckBox chkVisualization;
     private final JCheckBox chkAnimation;
+    private final JCheckBox chkWarmupFind;
     private final JSlider sldSpeed;
     private final JLabel lblSimTime;
     private final JLabel lblReplications;
@@ -52,6 +53,7 @@ public class ControlPanel extends JPanel implements ISimDelegate {
         // Visualization and speed settings
         chkVisualization = new JCheckBox("Vizualizácia");
         chkAnimation = new JCheckBox("Animácia");
+        chkWarmupFind = new JCheckBox("Hľadanie zahrievania");
         sldSpeed = new JSlider(1, 100, 10);
         sldSpeed.setEnabled(false);
         sldSpeed.setMaximumSize(new Dimension(120, 30));
@@ -86,6 +88,8 @@ public class ControlPanel extends JPanel implements ISimDelegate {
         this.add(chkVisualization);
         this.add(Box.createHorizontalStrut(5));
         this.add(chkAnimation);
+        this.add(Box.createHorizontalStrut(5));
+        this.add(chkWarmupFind);
         this.add(Box.createHorizontalStrut(10));
         this.add(sldSpeed);
         this.add(Box.createHorizontalStrut(15));
@@ -147,6 +151,10 @@ public class ControlPanel extends JPanel implements ISimDelegate {
             else core.setMaxSimSpeed();
         });
 
+        chkWarmupFind.addActionListener(e -> {
+            core.setWarmupFind(chkWarmupFind.isSelected());
+        });
+
         sldSpeed.addChangeListener(e -> {
             if (chkVisualization.isSelected()) core.setSimSpeed(1, computeDuration());
         });
@@ -164,9 +172,14 @@ public class ControlPanel extends JPanel implements ISimDelegate {
             int replCount = Integer.parseInt(txtReplications.getText());
             core.setNursesCount(Integer.parseInt(txtNurses.getText()));
             core.setDoctorsCount(Integer.parseInt(txtDoctors.getText()));
+            core.setWarmupFind(chkWarmupFind.isSelected());
 
-            if (chkVisualization.isSelected()) core.setSimSpeed(1, computeDuration());
-            else core.setMaxSimSpeed();
+            if (chkVisualization.isSelected()) {
+                core.setSimSpeed(1, computeDuration());
+            }
+            else {
+                core.setMaxSimSpeed();
+            }
 
             simThread = new Thread(() -> core.simulate(replCount, 2_419_200));
             simThread.start();

@@ -4,7 +4,6 @@ import OSPABA.*;
 import entities.Patient;
 import simulation.*;
 import agents.agententranceexam.*;
-import OSPABA.Process;
 
 //meta! id="49"
 public class ProcessEntranceExam extends OSPABA.Process
@@ -40,7 +39,6 @@ public class ProcessEntranceExam extends OSPABA.Process
         }
 
         patient.setPriority(priority);
-
 
         if (!mySim().isMaxSpeed()) {
             ((MySimulation) mySim()).logEvent(" | Začiatok vstupného vyšetrenia | " + msg.getPatient());

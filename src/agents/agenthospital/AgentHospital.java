@@ -40,10 +40,15 @@ public class AgentHospital extends OSPABA.Agent
     private DiscreteStatistics waitMedical;
     // Aktuálny počet pacientov čakajúcich na lekárske vyšetrenie
     private int medicalQueueSize;
+
     private DiscreteStatistics waitEntranceWalk;
     private DiscreteStatistics waitEntranceAmbulance;
     private DiscreteStatistics waitMedicalWalk;
     private DiscreteStatistics waitMedicalAmbulance;
+
+    private DiscreteStatistics timeFromArrivalToEntranceExam;
+    private DiscreteStatistics timeFromArrivalToEntranceExamWalk;
+    private DiscreteStatistics timeFromArrivalToEntranceExamAmbulance;
 
 	public AgentHospital(int id, Simulation mySim, Agent parent)
 	{
@@ -73,12 +78,17 @@ public class AgentHospital extends OSPABA.Agent
 
         entranceQueueLength = new TimeStatistics((MySimulation) mySim());
         medicalQueueLength = new TimeStatistics((MySimulation) mySim());
+
         waitEntrance = new DiscreteStatistics();
         waitMedical = new DiscreteStatistics();
         waitEntranceWalk = new DiscreteStatistics();;
         waitEntranceAmbulance = new DiscreteStatistics();;
         waitMedicalWalk = new DiscreteStatistics();;
         waitMedicalAmbulance = new DiscreteStatistics();;
+
+        timeFromArrivalToEntranceExam = new DiscreteStatistics();
+        timeFromArrivalToEntranceExamWalk = new DiscreteStatistics();
+        timeFromArrivalToEntranceExamAmbulance = new DiscreteStatistics();
 
         this.medicalQueueSize = 0;
     }
@@ -165,6 +175,18 @@ public class AgentHospital extends OSPABA.Agent
 
     public DiscreteStatistics getWaitMedicalAmbulance() {
         return waitMedicalAmbulance;
+    }
+
+    public DiscreteStatistics getTimeFromArrivalToEntranceExam() {
+        return timeFromArrivalToEntranceExam;
+    }
+
+    public DiscreteStatistics getTimeFromArrivalToEntranceExamWalk() {
+        return timeFromArrivalToEntranceExamWalk;
+    }
+
+    public DiscreteStatistics getTimeFromArrivalToEntranceExamAmbulance() {
+        return timeFromArrivalToEntranceExamAmbulance;
     }
 
     public void incrementMedicalQueue() {

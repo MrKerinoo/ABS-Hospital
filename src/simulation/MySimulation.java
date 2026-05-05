@@ -14,6 +14,7 @@ import java.util.Random;
 public class MySimulation extends OSPABA.Simulation
 {
     private Random random;
+    private boolean warmupFind;
 
     private int nursesCount;
     private int doctorsCount;
@@ -40,6 +41,10 @@ public class MySimulation extends OSPABA.Simulation
     private DiscreteStatistics waitEntranceAmbulance;
     private DiscreteStatistics waitMedicalWalk;
     private DiscreteStatistics waitMedicalAmbulance;
+
+    private DiscreteStatistics arrivalToEntrance;
+    private DiscreteStatistics arrivalToEntranceWalk;
+    private DiscreteStatistics arrivalToEntranceAmb;
 
     private DiscreteStatistics doctorUsage;
     private DiscreteStatistics nurseUsage;
@@ -82,12 +87,16 @@ public class MySimulation extends OSPABA.Simulation
         waitMedicalWalk = new DiscreteStatistics();
         waitMedicalAmbulance = new DiscreteStatistics();
 
+        arrivalToEntrance = new DiscreteStatistics();
+        arrivalToEntranceWalk = new DiscreteStatistics();
+        arrivalToEntranceAmb = new DiscreteStatistics();
+
         doctorUsage = new DiscreteStatistics();
         nurseUsage = new DiscreteStatistics();
         ambulanceAUsage = new DiscreteStatistics();
         ambulanceBUsage = new DiscreteStatistics();
 
-        this.random = new Random();
+        this.random = new Random(1);
 	}
 
 	@Override
@@ -120,6 +129,10 @@ public class MySimulation extends OSPABA.Simulation
         waitEntranceAmbulance.add(agentHospital().getWaitEntranceAmbulance().getMean());
         waitMedicalWalk.add(agentHospital().getWaitMedicalWalk().getMean());
         waitMedicalAmbulance.add(agentHospital().getWaitMedicalAmbulance().getMean());
+
+        arrivalToEntrance.add(agentHospital().getTimeFromArrivalToEntranceExam().getMean());
+        arrivalToEntranceWalk.add(agentHospital().getTimeFromArrivalToEntranceExamWalk().getMean());
+        arrivalToEntranceAmb.add(agentHospital().getTimeFromArrivalToEntranceExamAmbulance().getMean());
 
         doctorUsage.add(agentResources().getDoctorUsage().getMean());
         nurseUsage.add(agentResources().getNurseUsage().getMean());
@@ -213,12 +226,20 @@ public AgentMedicalExam agentMedicalExam()
         }
     }
 
+    public boolean isWarmupFind() {
+        return warmupFind;
+    }
+
     public int getNursesCount() {
         return nursesCount;
     }
 
     public int getDoctorsCount() {
         return doctorsCount;
+    }
+
+    public void setWarmupFind(boolean warmupFind) {
+        this.warmupFind = warmupFind;
     }
 
     public void setNursesCount(int nursesCount) {
@@ -311,5 +332,17 @@ public AgentMedicalExam agentMedicalExam()
 
     public DiscreteStatistics getPatientsOutAmbulance() {
         return patientsOutAmbulance;
+    }
+
+    public DiscreteStatistics getArrivalToEntrance() {
+        return arrivalToEntrance;
+    }
+
+    public DiscreteStatistics getArrivalToEntranceWalk() {
+        return arrivalToEntranceWalk;
+    }
+
+    public DiscreteStatistics getArrivalToEntranceAmb() {
+        return arrivalToEntranceAmb;
     }
 }

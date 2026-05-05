@@ -32,6 +32,10 @@ public class StatisticsPanel extends JPanel {
     private final JLabel lTimeSysWalk      = new JLabel("00:00:00");
     private final JLabel lTimeSysAmb       = new JLabel("00:00:00");
 
+    private final JLabel lArrivalEnt      = new JLabel("00:00:00");
+    private final JLabel lArrivalEntWalk  = new JLabel("00:00:00");
+    private final JLabel lArrivalEntAmb   = new JLabel("00:00:00");
+
     // --- Resource Usage ---
     private final JLabel lUsageDoctors     = new JLabel("0.00 %");
     private final JLabel lUsageNurses      = new JLabel("0.00 %");
@@ -67,6 +71,13 @@ public class StatisticsPanel extends JPanel {
     private final JLabel gIsWaitEntWalk    = new JLabel("<00:00:00, 00:00:00>");
     private final JLabel gWaitEntAmb       = new JLabel("00:00:00");
     private final JLabel gIsWaitEntAmb     = new JLabel("<00:00:00, 00:00:00>");
+
+    private final JLabel gArrivalEnt      = new JLabel("00:00:00");
+    private final JLabel gIsArrivalEnt    = new JLabel("<00:00:00, 00:00:00>");
+    private final JLabel gArrivalEntWalk  = new JLabel("00:00:00");
+    private final JLabel gIsArrivalEntWalk = new JLabel("<00:00:00, 00:00:00>");
+    private final JLabel gArrivalEntAmb   = new JLabel("00:00:00");
+    private final JLabel gIsArrivalEntAmb = new JLabel("<00:00:00, 00:00:00>");
 
     // Medical
     private final JLabel gWaitMedWalk      = new JLabel("00:00:00");
@@ -111,33 +122,37 @@ public class StatisticsPanel extends JPanel {
         JPanel localPanel = new JPanel(new GridLayout(1, 4, 10, 0));
         localPanel.setBorder(BorderFactory.createTitledBorder("Lokálne štatistiky"));
 
-        localPanel.add(createSection("Rady", new String[]{
-                "Dĺžka radu na vstupné vyšetrenie:", "Rad na lekárske ošetrenie:"
-        }, new JLabel[]{lAvgQueueEntrance, lAvgQueueMedical}));
-
-        localPanel.add(createSection("Časy čakania", new String[]{
-                "Doba čakania na vstupné vyšetrenie (CELKOVO):",
-                "Doba čakania na vstupné vyšetrenie (PEŠÍ):",
-                "Doba čakania na vstupné vyšetrenie (SANITKA):",
-                "Doba čakania na lekárske ošetrenie (CELKOVO):",
-                "Doba čakania na lekárske ošetrenie (PEŠÍ):",
-                "Doba čakania na lekárske ošetrenie (SANITKA):",
-                "Celkový čas v systéme (CELKOVO):",
-                "Celkový čas v systéme (PEŠÍ):",
-                "Celkový čas v systéme (SANITKA):"
+        // 1. Zdroje a Rady (Spojené)
+        localPanel.add(createSection("Zdroje a Rady", new String[]{
+                "Dĺžka radu (Vstup):", "Dĺžka radu (Lekárske):",
+                "Lekári:", "Sestričky:", "Ambulancie A:", "Ambulancie B:"
         }, new JLabel[]{
-                lAvgWaitEntrance, lWaitEntWalk, lWaitEntAmb,
-                lAvgWaitMedical, lWaitMedWalk, lWaitMedAmb,
-                lAvgTimeInSystem, lTimeSysWalk, lTimeSysAmb
+                lAvgQueueEntrance, lAvgQueueMedical,
+                lUsageDoctors, lUsageNurses, lUsageAmbulancesA, lUsageAmbulancesB
         }));
 
-        localPanel.add(createSection("Vyťaženie", new String[]{
-                "Lekári:", "Sestričky:", "Ambulancie A:", "Ambulancie B:"
-        }, new JLabel[]{lUsageDoctors, lUsageNurses, lUsageAmbulancesA, lUsageAmbulancesB}));
+        // 2. Časy čakania (Vstup/Lekár)
+        localPanel.add(createSection("Doba čakania", new String[]{
+                "Vstupné (CELKOVO):", "Vstupné (PEŠÍ):", "Vstupné (SANITKA):",
+                "Lekárske (CELKOVO):", "Lekárske (PEŠÍ):", "Lekárske (SANITKA):"
+        }, new JLabel[]{
+                lAvgWaitEntrance, lWaitEntWalk, lWaitEntAmb,
+                lAvgWaitMedical, lWaitMedWalk, lWaitMedAmb
+        }));
 
+        // 3. Systémové časy
+        localPanel.add(createSection("Čas v systéme", new String[]{
+                "Celkovo:", "Peší:", "Sanitka:",
+                "Príchod -> Ambulancia (CELKOM):", "Príchod -> Ambulancia (PEŠÍ):", "Príchod -> Ambulancia (AMB):"
+        }, new JLabel[]{
+                lAvgTimeInSystem, lTimeSysWalk, lTimeSysAmb,
+                lArrivalEnt, lArrivalEntWalk, lArrivalEntAmb
+        }));
+
+        // 4. Pacienti
         localPanel.add(createSection("Pacienti", new String[]{
-                "Počet príchodov (CELKOVO):", "Počet príchodov (PEŠO):", "Počet príchodov (SANITKA):",
-                "Počet odchodov (CELKOVO):", "Počet odchodov (PEŠO):", "Počet odchodov (SANITKA):",
+                "Príchody (CELKOVO):", "Príchody (PEŠO):", "Príchody (SANITKA):",
+                "Odchody (CELKOVO):", "Odchody (PEŠO):", "Odchody (SANITKA):",
                 "Počet v systéme:"
         }, new JLabel[]{
                 lPatientsIn, lPatientsInWalk, lPatientsInAmb,
@@ -149,39 +164,51 @@ public class StatisticsPanel extends JPanel {
         JPanel globalPanel = new JPanel(new GridLayout(1, 4, 10, 0));
         globalPanel.setBorder(BorderFactory.createTitledBorder("Globálne štatistiky"));
 
-        globalPanel.add(createSection("Rady",
-                new String[]{"Dĺžka radu na vstupné vyšetrenie:", "Rad na lekárske ošetrenie:"},
-                new JLabel[]{gAvgQueueEntrance, gIsQueueEntrance, gAvgQueueMedical, gIsQueueMedical}));
+        // 1. Zdroje a Rady (Spojené)
+        globalPanel.add(createSection("Zdroje a Rady",
+                new String[]{
+                        "Dĺžka radu (Vstup):", "Dĺžka radu (Lekárske):",
+                        "Lekári:", "Sestričky:", "Ambulancie A:", "Ambulancie B:"
+                },
+                new JLabel[]{
+                        gAvgQueueEntrance, gIsQueueEntrance,
+                        gAvgQueueMedical, gIsQueueMedical,
+                        gUsageDoctors, gIsUsageDoctors,
+                        gUsageNurses, gIsUsageNurses,
+                        gUsageAmbulancesA, gIsUsageAmbulancesA,
+                        gUsageAmbulancesB, gIsUsageAmbulancesB
+                }));
 
-        globalPanel.add(createSection("Časy čakania", new String[]{
-                "Doba čakania na vstupné vyšetrenie (CELKOVO):",
-                "Doba čakania na vstupné vyšetrenie (PEŠÍ):",
-                "Doba čakania na vstupné vyšetrenie (SANITKA):",
-                "Doba čakania na lekárske ošetrenie (CELKOVO):",
-                "Doba čakania na lekárske ošetrenie (PEŠÍ):",
-                "Doba čakania na lekárske ošetrenie (SANITKA):",
-                "Celkový čas v systéme (CELKOVO):",
-                "Celkový čas v systéme (PEŠÍ):",
-                "Celkový čas v systéme (SANITKA):"
+        // 2. Doba čakania (Vstup/Lekár)
+        globalPanel.add(createSection("Doba čakania", new String[]{
+                "Vstupné (CELKOVO):", "Vstupné (PEŠÍ):", "Vstupné (SANITKA):",
+                "Lekárske (CELKOVO):", "Lekárske (PEŠÍ):", "Lekárske (SANITKA):"
         }, new JLabel[]{
                 gAvgWaitEntrance, gIsWaitEntrance,
                 gWaitEntWalk, gIsWaitEntWalk,
                 gWaitEntAmb, gIsWaitEntAmb,
                 gAvgWaitMedical, gIsWaitMedical,
                 gWaitMedWalk, gIsWaitMedWalk,
-                gWaitMedAmb, gIsWaitMedAmb,
-                gAvgTimeInSystem, gIsTimeInSystem,
-                gTimeSysWalk, gIsTimeSysWalk,
-                gTimeSysAmb, gIsTimeSysAmb
+                gWaitMedAmb, gIsWaitMedAmb
         }));
 
-        globalPanel.add(createSection("Vyťaženie",
-                new String[]{"Lekári:", "Sestričky:", "Ambulancie A:", "Ambulancie B:"},
-                new JLabel[]{gUsageDoctors, gIsUsageDoctors, gUsageNurses, gIsUsageNurses, gUsageAmbulancesA, gIsUsageAmbulancesA, gUsageAmbulancesB, gIsUsageAmbulancesB}));
+        // 3. Systémové časy
+        globalPanel.add(createSection("Čas v systéme", new String[]{
+                "Celkovo:", "Peší:", "Sanitka:",
+                "Príchod -> Ambulancia (CELKOM):", "Príchod -> Ambulancia (PEŠÍ):", "Príchod -> Ambulancia (AMB):"
+        }, new JLabel[]{
+                gAvgTimeInSystem, gIsTimeInSystem,
+                gTimeSysWalk, gIsTimeSysWalk,
+                gTimeSysAmb, gIsTimeSysAmb,
+                gArrivalEnt, gIsArrivalEnt,
+                gArrivalEntWalk, gIsArrivalEntWalk,
+                gArrivalEntAmb, gIsArrivalEntAmb
+        }));
 
+        // 4. Pacienti
         globalPanel.add(createSection("Pacienti", new String[]{
-                "Počet príchodov (CELKOVO):", "Počet príchodov (PEŠO):", "Počet príchodov (SANITKA):",
-                "Počet odchodov (CELKOVO):", "Počet odchodov (PEŠO):", "Počet odchodov (SANITKA):"
+                "Príchody (CELKOVO):", "Príchody (PEŠO):", "Príchody (SANITKA):",
+                "Odchody (CELKOVO):", "Odchody (PEŠO):", "Odchody (SANITKA):"
         }, new JLabel[]{
                 gAvgPatientsIn, gIsPatientsIn,
                 gAvgPatientsInWalk, gIsPatientsInWalk,
@@ -265,6 +292,10 @@ public class StatisticsPanel extends JPanel {
         lAvgWaitEntrance.setText(formatTime(hosp.getWaitEntrance().getMean()));
         lAvgWaitMedical.setText(formatTime(hosp.getWaitMedical().getMean()));
 
+        lArrivalEnt.setText(formatTime(hosp.getTimeFromArrivalToEntranceExam().getMean()));
+        lArrivalEntWalk.setText(formatTime(hosp.getTimeFromArrivalToEntranceExamWalk().getMean()));
+        lArrivalEntAmb.setText(formatTime(hosp.getTimeFromArrivalToEntranceExamAmbulance().getMean()));
+
         // --- Partitioned waiting times (WALK / AMBULANCE) ---
         lWaitEntWalk.setText(formatTime(hosp.getWaitEntranceWalk().getMean()));
         lWaitEntAmb.setText(formatTime(hosp.getWaitEntranceAmbulance().getMean()));
@@ -305,6 +336,13 @@ public class StatisticsPanel extends JPanel {
         gIsWaitEntrance.setText(formatISTime(sim.getWaitEntrance().getConfidenceInterval95()));
         gAvgWaitMedical.setText(formatTime(sim.getWaitMedical().getMean()));
         gIsWaitMedical.setText(formatISTime(sim.getWaitMedical().getConfidenceInterval95()));
+
+        gArrivalEnt.setText(formatTime(sim.getArrivalToEntrance().getMean()));
+        gIsArrivalEnt.setText(formatISTime(sim.getArrivalToEntrance().getConfidenceInterval95()));
+        gArrivalEntWalk.setText(formatTime(sim.getArrivalToEntranceWalk().getMean()));
+        gIsArrivalEntWalk.setText(formatISTime(sim.getArrivalToEntranceWalk().getConfidenceInterval95()));
+        gArrivalEntAmb.setText(formatTime(sim.getArrivalToEntranceAmb().getMean()));
+        gIsArrivalEntAmb.setText(formatISTime(sim.getArrivalToEntranceAmb().getConfidenceInterval95()));
 
         // --- Global partitioned Entrance waiting ---
         gWaitEntWalk.setText(formatTime(sim.getWaitEntranceWalk().getMean()));

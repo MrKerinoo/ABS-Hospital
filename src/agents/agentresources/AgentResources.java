@@ -212,7 +212,11 @@ public class AgentResources extends OSPABA.Agent
     }
 
     public void recordDoctorUsage() {
-        doctorUsage.add((double)(allDoctors.size() - freeDoctors.size()) / allDoctors.size());
+        double val = (double)(allDoctors.size() - freeDoctors.size()) / allDoctors.size();
+        if (val < 0) {
+            System.out.println("ZÁPORNÉ VYŤAŽENIE! Voľných: " + freeDoctors.size() + " z " + allDoctors.size());
+        }
+        doctorUsage.add(val);
     }
 
     public void recordNurseUsage() {

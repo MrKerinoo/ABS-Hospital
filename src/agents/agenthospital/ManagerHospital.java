@@ -50,8 +50,8 @@ public class ManagerHospital extends OSPABA.Manager
         Ambulance ambulance = msg.getAmbulance();
 
         if (!mySim().isMaxSpeed()) {
-            ((MySimulation) mySim()).logEvent(" | Pacient sa presúva preč z čakárne | " + msg.getPatient());
-            System.out.println(mySim().currentTime() + " | Pacient sa presúva preč z čakárne | " + msg.getPatient());
+            ((MySimulation) mySim()).logEvent(" | Pacient sa presúva preč z ambulancie | " + msg.getPatient());
+            System.out.println(mySim().currentTime() + " | Pacient sa presúva preč z ambulancie | " + msg.getPatient());
         }
 
         if (mySim().animatorExists()) {
@@ -136,10 +136,15 @@ public class ManagerHospital extends OSPABA.Manager
         myAgent().getEntranceQueueLength().add(myAgent().getEntranceQueue().size());
         myAgent().getWaitEntrance().add(waitTime);
 
+        double entranceTime = mySim().currentTime() - msg.getPatient().getArrivalTime();
+        myAgent().getTimeFromArrivalToEntranceExam().add(entranceTime);
+
         if (msg.getPatient().isWithAmbulance()) {
             myAgent().getWaitEntranceAmbulance().add(waitTime);
+            myAgent().getTimeFromArrivalToEntranceExamAmbulance().add(entranceTime);
         } else {
             myAgent().getWaitEntranceWalk().add(waitTime);
+            myAgent().getTimeFromArrivalToEntranceExamWalk().add(entranceTime);
         }
 
         if (!mySim().isMaxSpeed()) {
