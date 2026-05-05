@@ -57,7 +57,7 @@ public class ExperimentPanel extends JPanel {
                         core.setWarmupFind(false);
                         core.setTotalReplications(replications);
                         core.setMaxSimSpeed();
-                        core.simulate(replications, 2_419_200);
+                        core.simulate(replications, 2_419_200 + core.getWarmupTime());
 
                         if (!this.isRunning) break;
 

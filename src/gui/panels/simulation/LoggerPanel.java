@@ -4,6 +4,7 @@ import simulation.MySimulation;
 import javax.swing.*;
 import java.awt.*;
 
+import static utils.Utils.formatSimTime;
 import static utils.Utils.formatTime;
 
 public class LoggerPanel extends JPanel {
@@ -26,11 +27,15 @@ public class LoggerPanel extends JPanel {
     }
 
     public void addMessage(String message) {
-        String timeStr = formatTime(core.currentTime());
+        double currentTime = core.currentTime();
+        double warmup = core.getWarmupTime();
+        double displayTime = (currentTime >= warmup) ? currentTime - warmup : currentTime;
+        
+        String timeStr = (currentTime < warmup) ? "ZAHRIEVANIE" : formatSimTime(displayTime);
         String fullEntry = String.format("[%s] %s", timeStr, message);
 
         SwingUtilities.invokeLater(() -> {
-            listModel.add(0, fullEntry); // Pridá na začiatok (vrch)
+            listModel.add(0, fullEntry);
             if (listModel.size() > MAX_LINES) {
                 listModel.removeElementAt(listModel.size() - 1);
             }

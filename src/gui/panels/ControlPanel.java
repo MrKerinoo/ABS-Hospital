@@ -230,9 +230,16 @@ public class ControlPanel extends JPanel implements ISimDelegate {
 
     @Override
     public void refresh(Simulation sim) {
-        if (chkVisualization.isSelected() || core.currentReplication() % 50 == 0) {
+        if (chkVisualization.isSelected()) {
             SwingUtilities.invokeLater(() -> {
-                lblSimTime.setText(Utils.formatSimTime(core.currentTime()));
+                double currentTime = core.currentTime();
+                double warmup = core.getWarmupTime();
+
+                if (warmup > 0 && currentTime < warmup) {
+                    lblSimTime.setText("ZAHRIEVANIE...");
+                } else {
+                    lblSimTime.setText(Utils.formatSimTime(currentTime - warmup));
+                }
             });
         }
     }

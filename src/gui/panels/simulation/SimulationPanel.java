@@ -157,8 +157,13 @@ public class SimulationPanel extends JPanel implements ISimDelegate {
                     core.agentResources().getEntranceRequests(),
                     new ResourceComparator()
             );
+
+            java.util.Set<simulation.MyMessage> allMedicalRequests = new java.util.HashSet<>();
+            allMedicalRequests.addAll(core.agentResources().getMedicalARequests());
+            allMedicalRequests.addAll(core.agentResources().getMedicalBRequests());
+
             medicalQueuePanel.refresh(
-                    core.agentResources().getMedicalBRequests(),
+                    allMedicalRequests,
                     new ResourceComparator()
             );
 

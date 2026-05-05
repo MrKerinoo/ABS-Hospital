@@ -32,6 +32,8 @@ public class AgentResources extends OSPABA.Agent
     private PriorityQueue<MyMessage> medicalARequests;
     private PriorityQueue<MyMessage> medicalBRequests;
 
+    private int medicalWaitingCount;
+
     // GENERATORS
 
     private ContinuousGenerator entranceAmbulanceMoveGenerator;
@@ -76,6 +78,7 @@ public class AgentResources extends OSPABA.Agent
         entranceRequests = new PriorityQueue<>(new ResourceComparator());
         medicalARequests = new PriorityQueue<>(new ResourceComparator());
         medicalBRequests = new PriorityQueue<>(new ResourceComparator());
+        medicalWaitingCount = 0;
 
         Random seedRandom = ((MySimulation) mySim()).getSeedRandom();
 
@@ -206,6 +209,14 @@ public class AgentResources extends OSPABA.Agent
         return medicalBRequests;
     }
 
+    public int getMedicalWaitingCount() {
+        return medicalWaitingCount;
+    }
+
+    public void setMedicalWaitingCount(int medicalWaitingCount) {
+        this.medicalWaitingCount = medicalWaitingCount;
+    }
+
     public ContinuousGenerator getEntranceAmbulanceMoveGenerator() {
         return entranceAmbulanceMoveGenerator;
     }
@@ -239,19 +250,23 @@ public class AgentResources extends OSPABA.Agent
     }
 
     public void recordDoctorUsage() {
+        if (allDoctors.isEmpty()) return;
         double val = (double)(allDoctors.size() - freeDoctors.size()) / allDoctors.size();
         doctorUsage.add(val);
     }
 
     public void recordNurseUsage() {
+        if (allNurses.isEmpty()) return;
         nurseUsage.add((double)(allNurses.size() - freeNurses.size()) / allNurses.size());
     }
 
     public void recordAmbulanceAUsage() {
+        if (allAmbulancesA.isEmpty()) return;
         ambulanceAUsage.add((double)(allAmbulancesA.size() - freeAmbulancesA.size()) / allAmbulancesA.size());
     }
 
     public void recordAmbulanceBUsage() {
+        if (allAmbulancesB.isEmpty()) return;
         ambulanceBUsage.add((double)(allAmbulancesB.size() - freeAmbulancesB.size()) / allAmbulancesB.size());
     }
 }

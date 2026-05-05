@@ -53,6 +53,7 @@ public class ManagerResources extends OSPABA.Manager
             myAgent().getMedicalBRequests().add(msg);
         }
 
+        myAgent().setMedicalWaitingCount(myAgent().getMedicalWaitingCount() + 1);
         updateQueueStats();
         allocateResources();
     }
@@ -138,15 +139,7 @@ public class ManagerResources extends OSPABA.Manager
 
     private void updateQueueStats() {
         myAgent().getEntranceQueueLength().add(myAgent().getEntranceRequests().size());
-        
-        java.util.Set<Integer> uniquePatients = new java.util.HashSet<>();
-        for (MyMessage m : myAgent().getMedicalARequests()) {
-            uniquePatients.add(m.getPatient().getId());
-        }
-        for (MyMessage m : myAgent().getMedicalBRequests()) {
-            uniquePatients.add(m.getPatient().getId());
-        }
-        myAgent().getMedicalQueueLength().add(uniquePatients.size());
+        myAgent().getMedicalQueueLength().add(myAgent().getMedicalWaitingCount());
     }
 
     private void allocateResources() {
@@ -162,6 +155,7 @@ public class ManagerResources extends OSPABA.Manager
                 MyMessage msg = myAgent().getMedicalARequests().poll();
                 myAgent().getMedicalBRequests().remove(msg);
                 
+                myAgent().setMedicalWaitingCount(myAgent().getMedicalWaitingCount() - 1);
                 updateQueueStats();
 
                 Nurse nurse = myAgent().getFreeNurses().remove(0);
@@ -171,6 +165,7 @@ public class ManagerResources extends OSPABA.Manager
                 msg.setNurse(nurse);
                 msg.setDoctor(doctor);
                 msg.setAmbulance(ambulance);
+                ambulance.setPatient(msg.getPatient());
                 
                 myAgent().recordNurseUsage();
                 myAgent().recordDoctorUsage();
@@ -193,6 +188,7 @@ public class ManagerResources extends OSPABA.Manager
                 MyMessage msg = myAgent().getMedicalBRequests().poll();
                 myAgent().getMedicalARequests().remove(msg);
                 
+                myAgent().setMedicalWaitingCount(myAgent().getMedicalWaitingCount() - 1);
                 updateQueueStats();
 
                 Nurse nurse = myAgent().getFreeNurses().remove(0);
@@ -202,6 +198,7 @@ public class ManagerResources extends OSPABA.Manager
                 msg.setNurse(nurse);
                 msg.setDoctor(doctor);
                 msg.setAmbulance(ambulance);
+                ambulance.setPatient(msg.getPatient());
                 
                 myAgent().recordNurseUsage();
                 myAgent().recordDoctorUsage();
@@ -229,6 +226,7 @@ public class ManagerResources extends OSPABA.Manager
                 
                 msg.setNurse(nurse);
                 msg.setAmbulance(ambulance);
+                ambulance.setPatient(msg.getPatient());
                 
                 myAgent().recordNurseUsage();
                 myAgent().recordAmbulanceBUsage();
