@@ -64,9 +64,22 @@ public class ControlPanel extends JPanel implements ISimDelegate {
         chkAnimation = new JCheckBox("Animácia");
         chkWarmupFind = new JCheckBox("Hľadanie zahrievania");
         chkExperiment = new JCheckBox("Experiment");
-        sldSpeed = new JSlider(1, 100, 10);
+        sldSpeed = new JSlider(1, 101, 11);
         sldSpeed.setEnabled(false);
-        sldSpeed.setMaximumSize(new Dimension(120, 30));
+        sldSpeed.setPreferredSize(new Dimension(300, 50));
+        sldSpeed.setMaximumSize(new Dimension(300, 50));
+        sldSpeed.setMajorTickSpacing(30);
+        sldSpeed.setMinorTickSpacing(10);
+        sldSpeed.setPaintTicks(true);
+        sldSpeed.setPaintLabels(true);
+        
+        java.util.Hashtable<Integer, JLabel> labelTable = new java.util.Hashtable<>();
+        labelTable.put(1, new JLabel("0.1x"));
+        labelTable.put(11, new JLabel("1x"));
+        labelTable.put(41, new JLabel("10x"));
+        labelTable.put(71, new JLabel("100x"));
+        labelTable.put(101, new JLabel("1000x"));
+        sldSpeed.setLabelTable(labelTable);
 
         // Time and replication display
         lblSimTime = new JLabel("Deň 1  00:00:00");
@@ -163,10 +176,20 @@ public class ControlPanel extends JPanel implements ISimDelegate {
         });
 
         chkVisualization.addActionListener(e -> {
-            sldSpeed.setEnabled(chkVisualization.isSelected());
+            boolean selected = chkVisualization.isSelected();
+            sldSpeed.setEnabled(selected);
+            core.setVisualizationEnabled(selected);
 
-            if (chkVisualization.isSelected() && core.isRunning() && !core.isMaxSpeed()) {
-                core.setSimSpeed(1, computeDuration());
+            if (!selected) {
+                lblSimTime.setText("Deň 1  00:00:00");
+            }
+
+            if (core.isRunning()) {
+                if (selected) {
+                    core.setSimSpeed(1, computeDuration());
+                } else {
+                    core.setMaxSimSpeed();
+                }
             }
         });
 
@@ -186,10 +209,14 @@ public class ControlPanel extends JPanel implements ISimDelegate {
     }
 
     private double computeDuration() {
-        double diff = sldSpeed.getValue() - 10;
-        if (diff == 0) return 1.0;
-        if (diff > 0) return 1.0 / (diff + 1.0);
-        return Math.abs(diff);
+        double value = sldSpeed.getValue();
+        if (value == 11) return 1.0;
+        
+        if (value < 11) {
+            return 1.0 + (11 - value); 
+        } else {
+            return 1.0 / Math.pow(10, (value - 11) / 30.0);
+        }
     }
 
     private void runSim() {
@@ -240,6 +267,8 @@ public class ControlPanel extends JPanel implements ISimDelegate {
                 } else {
                     lblSimTime.setText(Utils.formatSimTime(currentTime - warmup));
                 }
+
+                lblReplications.setText("Replikácie: " + (core.currentReplication() + 1) + "/" + txtReplications.getText());
             });
         }
     }
@@ -285,6 +314,7 @@ public class ControlPanel extends JPanel implements ISimDelegate {
                 btnStop.setEnabled(false);
 
                 txtReplications.setEnabled(true);
+                txtWarmupTime.setEnabled(!chkWarmupFind.isSelected());
                 txtNurses.setEnabled(true);
                 txtDoctors.setEnabled(true);
                 break;
@@ -295,6 +325,7 @@ public class ControlPanel extends JPanel implements ISimDelegate {
                 btnPause.setEnabled(true);
                 btnStop.setEnabled(true);
                 txtReplications.setEnabled(false);
+                txtWarmupTime.setEnabled(false);
                 txtNurses.setEnabled(false);
                 txtDoctors.setEnabled(false);
                 break;

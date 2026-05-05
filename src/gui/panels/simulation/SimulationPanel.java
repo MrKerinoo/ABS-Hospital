@@ -138,6 +138,8 @@ public class SimulationPanel extends JPanel implements ISimDelegate {
 
     @Override
     public void refresh(Simulation sim) {
+        if (!core.isVisualizationEnabled()) return;
+
         SwingUtilities.invokeLater(() -> {
             if (entranceQueuePanel == null || medicalQueuePanel == null) return;
 

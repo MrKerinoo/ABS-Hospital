@@ -82,6 +82,11 @@ public class ExperimentPanel extends JPanel {
                                 ok ? "VYHOVUJE" : "NEVYHOVUJE"
                         });
                     }
+                    // Pridanie prázdneho riadku po každej skupine (všetci lekári pre daný počet sestier)
+                    SwingUtilities.invokeLater(() -> {
+                        this.tableModel.addRow(new Object[]{"---", "---", "---", "---", "---"});
+                    });
+
                     if (!this.isRunning) break;
                 }
                 this.exportToCSV(csvData);
