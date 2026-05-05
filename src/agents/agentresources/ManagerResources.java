@@ -1,12 +1,13 @@
 package agents.agentresources;
 
 import OSPABA.*;
-import comparators.ResourceComparator;
 import entities.Ambulance;
 import entities.Doctor;
 import entities.Nurse;
-import entities.Patient;
 import simulation.*;
+
+import java.util.List;
+import java.util.PriorityQueue;
 
 //meta! id="16"
 public class ManagerResources extends OSPABA.Manager
@@ -14,7 +15,7 @@ public class ManagerResources extends OSPABA.Manager
 	public ManagerResources(int id, Simulation mySim, Agent myAgent)
 	{
 		super(id, mySim, myAgent);
-		init();
+		this.init();
 	}
 
 	@Override
@@ -23,9 +24,9 @@ public class ManagerResources extends OSPABA.Manager
 		super.prepareReplication();
 		// Setup component for the next replication
 
-		if (petriNet() != null)
+		if (this.petriNet() != null)
 		{
-			petriNet().clear();
+			this.petriNet().clear();
 		}
 	}
 
@@ -35,8 +36,8 @@ public class ManagerResources extends OSPABA.Manager
         MyMessage msg = (MyMessage) message;
         myAgent().getEntranceRequests().add(msg);
         
-        updateQueueStats();
-        allocateResources();
+        this.updateQueueStats();
+        this.allocateResources();
 	}
 
 	//meta! sender="AgentHospital", id="116", type="Request"
@@ -54,8 +55,8 @@ public class ManagerResources extends OSPABA.Manager
         }
 
         myAgent().setMedicalWaitingCount(myAgent().getMedicalWaitingCount() + 1);
-        updateQueueStats();
-        allocateResources();
+        this.updateQueueStats();
+        this.allocateResources();
     }
 
 	//meta! sender="ProcessMovePersonnel", id="47", type="Finish"
@@ -88,7 +89,7 @@ public class ManagerResources extends OSPABA.Manager
             msg.setCode(Mc.requestEntranceResources);
         }
 
-        response(msg);
+        this.response(msg);
     }
 
 	//meta! sender="AgentHospital", id="115", type="Notice"
@@ -106,7 +107,7 @@ public class ManagerResources extends OSPABA.Manager
         myAgent().recordNurseUsage();
         myAgent().recordAmbulanceBUsage();
 
-        allocateResources();
+        this.allocateResources();
 	}
 
 	//meta! sender="AgentHospital", id="118", type="Notice"
@@ -134,111 +135,7 @@ public class ManagerResources extends OSPABA.Manager
         myAgent().recordDoctorUsage();
         myAgent().recordNurseUsage();
 
-        allocateResources();
-    }
-
-    private void updateQueueStats() {
-        myAgent().getEntranceQueueLength().add(myAgent().getEntranceRequests().size());
-        myAgent().getMedicalQueueLength().add(myAgent().getMedicalWaitingCount());
-    }
-
-    private void allocateResources() {
-        boolean changed = true;
-
-        while (changed) {
-            changed = false;
-
-            // 1. Try allocate Medical Exam A
-            if (!myAgent().getMedicalARequests().isEmpty() && !myAgent().getFreeDoctors().isEmpty() &&
-                !myAgent().getFreeNurses().isEmpty() && !myAgent().getFreeAmbulancesA().isEmpty()) {
-                
-                MyMessage msg = myAgent().getMedicalARequests().poll();
-                myAgent().getMedicalBRequests().remove(msg);
-                
-                myAgent().setMedicalWaitingCount(myAgent().getMedicalWaitingCount() - 1);
-                updateQueueStats();
-
-                Nurse nurse = myAgent().getFreeNurses().remove(0);
-                Doctor doctor = myAgent().getFreeDoctors().remove(0);
-                Ambulance ambulance = myAgent().getFreeAmbulancesA().remove(0);
-                
-                msg.setNurse(nurse);
-                msg.setDoctor(doctor);
-                msg.setAmbulance(ambulance);
-                ambulance.setPatient(msg.getPatient());
-                
-                myAgent().recordNurseUsage();
-                myAgent().recordDoctorUsage();
-                myAgent().recordAmbulanceAUsage();
-                
-                // Start movement instead of immediate response
-                msg.setAddressee(myAgent().findAssistant(Id.processMovePersonnel));
-                startContinualAssistant(msg);
-
-                changed = true;
-                continue;
-            }
-
-            // 2. Try allocate Medical Exam B
-            if (!myAgent().getMedicalBRequests().isEmpty() && 
-                !myAgent().getFreeDoctors().isEmpty() && 
-                !myAgent().getFreeNurses().isEmpty() && 
-                !myAgent().getFreeAmbulancesB().isEmpty()) {
-                
-                MyMessage msg = myAgent().getMedicalBRequests().poll();
-                myAgent().getMedicalARequests().remove(msg);
-                
-                myAgent().setMedicalWaitingCount(myAgent().getMedicalWaitingCount() - 1);
-                updateQueueStats();
-
-                Nurse nurse = myAgent().getFreeNurses().remove(0);
-                Doctor doctor = myAgent().getFreeDoctors().remove(0);
-                Ambulance ambulance = myAgent().getFreeAmbulancesB().remove(0);
-                
-                msg.setNurse(nurse);
-                msg.setDoctor(doctor);
-                msg.setAmbulance(ambulance);
-                ambulance.setPatient(msg.getPatient());
-                
-                myAgent().recordNurseUsage();
-                myAgent().recordDoctorUsage();
-                myAgent().recordAmbulanceBUsage();
-                
-                // Start movement instead of immediate response
-                msg.setAddressee(myAgent().findAssistant(Id.processMovePersonnel));
-                startContinualAssistant(msg);
-
-                changed = true;
-                continue;
-            }
-
-            // 3. Try allocate Entrance Exam (only needs Nurse and Amb B)
-            if (!myAgent().getEntranceRequests().isEmpty() && 
-                !myAgent().getFreeNurses().isEmpty() && 
-                !myAgent().getFreeAmbulancesB().isEmpty()) {
-                
-                MyMessage msg = myAgent().getEntranceRequests().poll();
-                
-                updateQueueStats();
-
-                Nurse nurse = myAgent().getFreeNurses().remove(0);
-                Ambulance ambulance = myAgent().getFreeAmbulancesB().remove(0);
-                
-                msg.setNurse(nurse);
-                msg.setAmbulance(ambulance);
-                ambulance.setPatient(msg.getPatient());
-                
-                myAgent().recordNurseUsage();
-                myAgent().recordAmbulanceBUsage();
-                
-                // Start movement instead of immediate response
-                msg.setAddressee(myAgent().findAssistant(Id.processMovePersonnel));
-                startContinualAssistant(msg);
-
-                changed = true;
-                continue;
-            }
-        }
+        this.allocateResources();
     }
 
 	//meta! userInfo="Process messages defined in code", id="0"
@@ -291,4 +188,101 @@ public class ManagerResources extends OSPABA.Manager
 	{
 		return (AgentResources)super.myAgent();
 	}
+
+    private void updateQueueStats() {
+        myAgent().getEntranceQueueLength().add(myAgent().getEntranceRequests().size());
+        myAgent().getMedicalQueueLength().add(myAgent().getMedicalWaitingCount());
+    }
+
+    private void allocateResources() {
+        boolean changed = true;
+
+        while (changed) {
+            changed = false;
+
+            // Medical Exam A
+            if (this.tryAllocateMedical(myAgent().getMedicalARequests(), myAgent().getMedicalBRequests(),
+                    myAgent().getFreeAmbulancesA(), 'A')) {
+                changed = true;
+                continue;
+            }
+
+            // Medical Exam B
+            if (this.tryAllocateMedical(myAgent().getMedicalBRequests(), myAgent().getMedicalARequests(),
+                    myAgent().getFreeAmbulancesB(), 'B')) {
+                changed = true;
+                continue;
+            }
+
+            // Entrance Exam
+            if (this.tryAllocateEntrance()) {
+                changed = true;
+            }
+        }
+    }
+
+    private boolean tryAllocateMedical(PriorityQueue<MyMessage> primary, PriorityQueue<MyMessage> secondary,
+                                       List<Ambulance> ambulances, char type) {
+        if (!primary.isEmpty() && !myAgent().getFreeDoctors().isEmpty() &&
+            !myAgent().getFreeNurses().isEmpty() && !ambulances.isEmpty()) {
+            
+            MyMessage msg = primary.poll();
+            secondary.remove(msg);
+            
+            myAgent().setMedicalWaitingCount(myAgent().getMedicalWaitingCount() - 1);
+            this.updateQueueStats();
+
+            Nurse nurse = myAgent().getFreeNurses().removeFirst();
+            Doctor doctor = myAgent().getFreeDoctors().removeFirst();
+            Ambulance ambulance = ambulances.removeFirst();
+            
+            msg.setNurse(nurse);
+            msg.setDoctor(doctor);
+            msg.setAmbulance(ambulance);
+            ambulance.setPatient(msg.getPatient());
+            
+            myAgent().recordNurseUsage();
+            myAgent().recordDoctorUsage();
+
+            if (type == 'A') {
+                myAgent().recordAmbulanceAUsage();
+            } else {
+                myAgent().recordAmbulanceBUsage();
+            }
+            
+            msg.setAddressee(myAgent().findAssistant(Id.processMovePersonnel));
+
+            this.startContinualAssistant(msg);
+
+            return true;
+        }
+        return false;
+    }
+
+    private boolean tryAllocateEntrance() {
+        if (!myAgent().getEntranceRequests().isEmpty() && 
+            !myAgent().getFreeNurses().isEmpty() && 
+            !myAgent().getFreeAmbulancesB().isEmpty()) {
+            
+            MyMessage msg = myAgent().getEntranceRequests().poll();
+            this.updateQueueStats();
+
+            Nurse nurse = myAgent().getFreeNurses().removeFirst();
+            Ambulance ambulance = myAgent().getFreeAmbulancesB().removeFirst();
+            
+            msg.setNurse(nurse);
+            msg.setAmbulance(ambulance);
+            ambulance.setPatient(msg.getPatient());
+            
+            myAgent().recordNurseUsage();
+            myAgent().recordAmbulanceBUsage();
+            
+            msg.setAddressee(myAgent().findAssistant(Id.processMovePersonnel));
+
+            this.startContinualAssistant(msg);
+
+            return true;
+        }
+        return false;
+    }
 }

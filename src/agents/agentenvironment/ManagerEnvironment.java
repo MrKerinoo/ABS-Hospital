@@ -32,7 +32,6 @@ public class ManagerEnvironment extends OSPABA.Manager
 	public void processPatientExit(MessageForm message)
 	{
         MyMessage msg = (MyMessage) message;
-        // UPDATE STATISTICS
 
         Patient patient = msg.getPatient();
 

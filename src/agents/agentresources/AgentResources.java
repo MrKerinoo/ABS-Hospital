@@ -44,13 +44,9 @@ public class AgentResources extends OSPABA.Agent
     private TimeStatistics entranceQueueLength;
     private TimeStatistics medicalQueueLength;
 
-    // Priemerné vyťaženie lekárov
     private TimeStatistics doctorUsage;
-    // Priemerné vyťaženie sestričiek
     private TimeStatistics nurseUsage;
-    // Priemerné vyťaženie ambulancií typu A
     private TimeStatistics ambulanceAUsage;
-    // Priemerné vyťaženie ambulancií typu B
     private TimeStatistics ambulanceBUsage;
 
 	public AgentResources(int id, Simulation mySim, Agent parent)
