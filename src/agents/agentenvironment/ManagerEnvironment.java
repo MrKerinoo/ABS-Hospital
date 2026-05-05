@@ -181,6 +181,12 @@ public class ManagerEnvironment extends OSPABA.Manager
 	public void processFinishSchedulerWarmup(MessageForm message)
 	{
         ((MySimulation) mySim()).resetAllStats();
+
+        MySimulation sim = (MySimulation) mySim();
+
+        if (sim.isVisualizationEnabled()) {
+            sim.setSimSpeed(1, sim.getVisualizationSpeed());
+        }
 	}
 
 	//meta! userInfo="Generated code: do not modify", tag="begin"

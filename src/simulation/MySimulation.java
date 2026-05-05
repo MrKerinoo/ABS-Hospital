@@ -18,6 +18,8 @@ public class MySimulation extends OSPABA.Simulation
     private Random random;
     private boolean warmupFind;
     private double warmupTime = 0;
+    private double visualizationSpeed = 1.0;
+    private boolean visualizationEnabled = false;
     private List<List<Double>> wipData;
     private int totalReplications;
 
@@ -287,12 +289,28 @@ public AgentMedicalExam agentMedicalExam()
         return totalReplications;
     }
 
+    public double getVisualizationSpeed() {
+        return visualizationSpeed;
+    }
+
+    public boolean isVisualizationEnabled() {
+        return visualizationEnabled;
+    }
+
     public void setWarmupTime(double warmupTime) {
         this.warmupTime = warmupTime;
     }
 
     public void setWarmupFind(boolean warmupFind) {
         this.warmupFind = warmupFind;
+    }
+
+    public void setVisualizationSpeed(double visualizationSpeed) {
+        this.visualizationSpeed = visualizationSpeed;
+    }
+
+    public void setVisualizationEnabled(boolean visualizationEnabled) {
+        this.visualizationEnabled = visualizationEnabled;
     }
 
     public void setTotalReplications(int totalReplications) {

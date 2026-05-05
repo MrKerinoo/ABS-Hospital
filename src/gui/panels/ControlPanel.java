@@ -152,11 +152,6 @@ public class ControlPanel extends JPanel implements ISimDelegate {
                     animationPanel.handleAnimation(true);
                 }
 
-                if (chkVisualization.isSelected()) {
-                    core.setSimSpeed(1, computeDuration());
-                } else {
-                    core.setMaxSimSpeed();
-                }
             } else {
                 if (core.animatorExists()) {
                     core.removeAnimator();
@@ -167,19 +162,26 @@ public class ControlPanel extends JPanel implements ISimDelegate {
             }
         });
 
-        // Visualization logic
         chkVisualization.addActionListener(e -> {
             sldSpeed.setEnabled(chkVisualization.isSelected());
-            if (chkVisualization.isSelected()) core.setSimSpeed(1, computeDuration());
-            else core.setMaxSimSpeed();
+
+            if (chkVisualization.isSelected() && core.isRunning() && !core.isMaxSpeed()) {
+                core.setSimSpeed(1, computeDuration());
+            }
+        });
+
+        // Slider logic
+        sldSpeed.addChangeListener(e -> {
+            if (chkVisualization.isSelected()) {
+                core.setVisualizationSpeed(computeDuration());
+                if (core.isRunning() && !core.isMaxSpeed()) {
+                    core.setSimSpeed(1, computeDuration());
+                }
+            }
         });
 
         chkWarmupFind.addActionListener(e -> {
             core.setWarmupFind(chkWarmupFind.isSelected());
-        });
-
-        sldSpeed.addChangeListener(e -> {
-            if (chkVisualization.isSelected()) core.setSimSpeed(1, computeDuration());
         });
     }
 
@@ -196,12 +198,12 @@ public class ControlPanel extends JPanel implements ISimDelegate {
             core.setWarmupFind(chkWarmupFind.isSelected());
             core.setTotalReplications(replCount);
             core.setMaxSimSpeed();
-//
-//            if (chkWarmupFind.isSelected()) {
-//                core.setWarmupTime(0);
-//            } else {
-//                core.setWarmupTime(Double.parseDouble(txtWarmupTime.getText()));
-//            }
+
+            if (chkWarmupFind.isSelected()) {
+                core.setWarmupTime(0);
+            } else {
+                core.setWarmupTime(Double.parseDouble(txtWarmupTime.getText()));
+            }
 
             if (chkExperiment.isSelected()) {
                 experimentPanel.startAnalysis(replCount);
@@ -210,10 +212,13 @@ public class ControlPanel extends JPanel implements ISimDelegate {
                 core.setDoctorsCount(Integer.parseInt(txtDoctors.getText()));
 
                 if (chkVisualization.isSelected()) {
-                    core.setSimSpeed(1, computeDuration());
+                    core.setVisualizationEnabled(true);
+                    core.setVisualizationSpeed(computeDuration());
                 } else {
-                    core.setMaxSimSpeed();
+                    core.setVisualizationEnabled(false);
                 }
+
+                core.setMaxSimSpeed();
 
                 simThread = new Thread(() -> core.simulate(replCount, 2_419_200 + core.getWarmupTime()));
                 simThread.start();
