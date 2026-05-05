@@ -60,7 +60,34 @@ public class ManagerResources extends OSPABA.Manager
 	//meta! sender="ProcessMovePersonnel", id="47", type="Finish"
 	public void processFinish(MessageForm message)
     {
-        // Assistant no longer used in simplified logic
+        MyMessage msg = (MyMessage) message;
+        Ambulance targetAmb = msg.getAmbulance();
+
+        if (msg.getNurse() != null) {
+            Nurse nurse = msg.getNurse();
+            if (nurse.getAmbulance() != null) {
+                nurse.getAmbulance().setNurse(null);
+            }
+            nurse.setAmbulance(targetAmb);
+            targetAmb.setNurse(nurse);
+        }
+
+        if (msg.getDoctor() != null) {
+            Doctor doctor = msg.getDoctor();
+            if (doctor.getAmbulance() != null) {
+                doctor.getAmbulance().setDoctor(null);
+            }
+            doctor.setAmbulance(targetAmb);
+            targetAmb.setDoctor(doctor);
+            
+            // Restore code for medical exam
+            msg.setCode(Mc.requestMedicalResources);
+        } else {
+            // Restore code for entrance exam
+            msg.setCode(Mc.requestEntranceResources);
+        }
+
+        response(msg);
     }
 
 	//meta! sender="AgentHospital", id="115", type="Notice"
@@ -129,10 +156,8 @@ public class ManagerResources extends OSPABA.Manager
             changed = false;
 
             // 1. Try allocate Medical Exam A
-            if (!myAgent().getMedicalARequests().isEmpty() && 
-                !myAgent().getFreeDoctors().isEmpty() && 
-                !myAgent().getFreeNurses().isEmpty() && 
-                !myAgent().getFreeAmbulancesA().isEmpty()) {
+            if (!myAgent().getMedicalARequests().isEmpty() && !myAgent().getFreeDoctors().isEmpty() &&
+                !myAgent().getFreeNurses().isEmpty() && !myAgent().getFreeAmbulancesA().isEmpty()) {
                 
                 MyMessage msg = myAgent().getMedicalARequests().poll();
                 myAgent().getMedicalBRequests().remove(msg);
@@ -151,7 +176,10 @@ public class ManagerResources extends OSPABA.Manager
                 myAgent().recordDoctorUsage();
                 myAgent().recordAmbulanceAUsage();
                 
-                response(msg);
+                // Start movement instead of immediate response
+                msg.setAddressee(myAgent().findAssistant(Id.processMovePersonnel));
+                startContinualAssistant(msg);
+
                 changed = true;
                 continue;
             }
@@ -179,7 +207,10 @@ public class ManagerResources extends OSPABA.Manager
                 myAgent().recordDoctorUsage();
                 myAgent().recordAmbulanceBUsage();
                 
-                response(msg);
+                // Start movement instead of immediate response
+                msg.setAddressee(myAgent().findAssistant(Id.processMovePersonnel));
+                startContinualAssistant(msg);
+
                 changed = true;
                 continue;
             }
@@ -202,7 +233,10 @@ public class ManagerResources extends OSPABA.Manager
                 myAgent().recordNurseUsage();
                 myAgent().recordAmbulanceBUsage();
                 
-                response(msg);
+                // Start movement instead of immediate response
+                msg.setAddressee(myAgent().findAssistant(Id.processMovePersonnel));
+                startContinualAssistant(msg);
+
                 changed = true;
                 continue;
             }
