@@ -15,9 +15,6 @@ public class TriangularGenerator {
         this.modus = modus;
     }
 
-    /**
-     * Kód vytvorený s pomocou AI, zdokumentované v kapitole 1.3
-     */
     public double randDouble() {
         double u = this.generator.nextDouble();
         double splitPoint = (double) (this.modus - this.min) / (this.max - this.min);

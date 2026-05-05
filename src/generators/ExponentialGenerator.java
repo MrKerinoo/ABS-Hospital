@@ -2,6 +2,9 @@ package generators;
 
 import java.util.Random;
 
+/**
+ * Kód vytvorený s pomocou AI, zdokumentované v kapitole 1.3
+ */
 public class ExponentialGenerator {
     private final Random generator;
     private final double lambda;
@@ -13,9 +16,6 @@ public class ExponentialGenerator {
         this.shift = shift;
     }
 
-    /**
-     * Kód vytvorený s pomocou AI, zdokumentované v kapitole 1.2
-     */
     public double randDouble() {
         return (-Math.log(1.0 - this.generator.nextDouble()) / this.lambda) + this.shift;
     }
