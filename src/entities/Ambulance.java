@@ -51,19 +51,6 @@ public class Ambulance {
 
     public void setType(char type) {
         this.type = type;
-
-        int ambAstartX = 191;
-        int ambBStartX = 879;
-        int startY = 117;
-        int gap = 120;
-    }
-
-    public double getX() {
-        return x;
-    }
-
-    public double getY() {
-        return y;
     }
 
     public double getXDoor() {

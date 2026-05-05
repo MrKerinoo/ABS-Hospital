@@ -195,6 +195,25 @@ public class ManagerResources extends OSPABA.Manager
     }
 
     private void allocateResources() {
+        int strategy = ((MySimulation) mySim()).getStrategyType();
+        switch (strategy) {
+            case MySimulation.STRATEGY_SAVING_A:
+                this.allocateResourcesSavingA();
+                break;
+            case MySimulation.STRATEGY_AMBULANCE_PREFERENCE:
+                this.allocateResourcesAmbulancePreference();
+                break;
+            case MySimulation.STRATEGY_EXAM_PREFERENCE:
+                this.allocateResourcesExamPreference();
+                break;
+            case MySimulation.STRATEGY_BASIC:
+            default:
+                this.allocateResourcesBasic();
+                break;
+        }
+    }
+
+    private void allocateResourcesBasic() {
         boolean changed = true;
 
         while (changed) {
@@ -216,6 +235,99 @@ public class ManagerResources extends OSPABA.Manager
 
             // Entrance Exam
             if (this.tryAllocateEntrance()) {
+                changed = true;
+            }
+        }
+    }
+
+    private void allocateResourcesExamPreference() {
+        boolean changed = true;
+
+        while (changed) {
+            changed = false;
+
+            // 1. Entrance Exam -> Absolute Priority
+            if (this.tryAllocateEntrance()) {
+                changed = true;
+                continue;
+            }
+
+            // 2. Medical Exam (P1 & P2) -> only Ambulance A
+            if (this.tryAllocateMedical(myAgent().getMedicalARequests(), myAgent().getMedicalBRequests(),
+                    myAgent().getFreeAmbulancesA(), 'A')) {
+                changed = true;
+                continue;
+            }
+
+            // 3. Medical Exam B (P3, P4, P5)
+            if (this.tryAllocateMedical(myAgent().getMedicalBRequests(), myAgent().getMedicalARequests(),
+                    myAgent().getFreeAmbulancesB(), 'B')) {
+                changed = true;
+                continue;
+            }
+
+            // 4. Medical Exam A (Fallback for P3, P4)
+            if (this.tryAllocateMedical(myAgent().getMedicalARequests(), myAgent().getMedicalBRequests(),
+                    myAgent().getFreeAmbulancesA(), 'A')) {
+                changed = true;
+            }
+        }
+    }
+
+    private void allocateResourcesAmbulancePreference() {
+        this.allocateResourcesBasic();
+    }
+
+    private void allocateResourcesSavingA() {
+        boolean changed = true;
+
+        while (changed) {
+            changed = false;
+
+            // 1. Critical Medical Exam (P1 & P2) -> only Ambulance A
+            if (this.tryAllocateMedical(myAgent().getMedicalARequests(), myAgent().getMedicalBRequests(),
+                    myAgent().getFreeAmbulancesA(), 'A')) {
+                changed = true;
+                continue;
+            }
+
+            // 2. Optimized: P3 & P4 Patients prefer Ambulance B first
+            // We check if the head of the medical queue is a P3 or P4 patient
+            if (!myAgent().getMedicalBRequests().isEmpty()) {
+                MyMessage head = myAgent().getMedicalBRequests().peek();
+                int priority = head.getPatient().getPriority();
+                
+                // If it's P3 or P4, try to give them B first
+                if (priority == 3 || priority == 4) {
+                    if (this.tryAllocateMedical(myAgent().getMedicalBRequests(), myAgent().getMedicalARequests(),
+                            myAgent().getFreeAmbulancesB(), 'B')) {
+                        changed = true;
+                        continue;
+                    }
+                }
+            }
+
+            // 3. Entrance Exam -> Ambulance B
+            if (this.tryAllocateEntrance()) {
+                changed = true;
+                continue;
+            }
+
+            // 4. Low Priority (P5) -> only Ambulance B
+            if (!myAgent().getMedicalBRequests().isEmpty()) {
+                MyMessage head = myAgent().getMedicalBRequests().peek();
+                if (head.getPatient().getPriority() == 5) {
+                    if (this.tryAllocateMedical(myAgent().getMedicalBRequests(), myAgent().getMedicalARequests(),
+                            myAgent().getFreeAmbulancesB(), 'B')) {
+                        changed = true;
+                        continue;
+                    }
+                }
+            }
+
+            // 5. Fallback for P3 & P4 -> if B was not available, try A
+            if (this.tryAllocateMedical(myAgent().getMedicalARequests(), myAgent().getMedicalBRequests(),
+                    myAgent().getFreeAmbulancesA(), 'A')) {
                 changed = true;
             }
         }

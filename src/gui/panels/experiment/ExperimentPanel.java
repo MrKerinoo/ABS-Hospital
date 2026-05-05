@@ -1,7 +1,6 @@
 package gui.panels.experiment;
 
 import simulation.MySimulation;
-import statistics.DiscreteStatistics;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -77,8 +76,7 @@ public class ExperimentPanel extends JPanel {
 
                         csvData.add(new String[]{
                                 String.valueOf(nurses), String.valueOf(doctors),
-                                String.format("%.2f", ambulanceWait).replace('.', ','),
-                                String.format("%.2f", walkWait).replace('.', ','),
+                                fa, fw,
                                 ok ? "VYHOVUJE" : "NEVYHOVUJE"
                         });
                     }
@@ -107,7 +105,7 @@ public class ExperimentPanel extends JPanel {
         if (!folder.exists()) folder.mkdirs();
 
         try (FileWriter writer = new FileWriter("./data/experiment_results.csv")) {
-            writer.write("Sestry;Lekari;Cakanie_Sanitka_s;Cakanie_Peso_s;Status\n");
+            writer.write("Sestry;Lekari;Cakanie_Sanitka;Cakanie_Peso;Status\n");
             for (String[] row : data) {
                 writer.write(String.join(";", row) + "\n");
             }

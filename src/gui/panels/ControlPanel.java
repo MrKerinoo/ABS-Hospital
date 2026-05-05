@@ -29,6 +29,7 @@ public class ControlPanel extends JPanel implements ISimDelegate {
     private final JCheckBox chkAnimation;
     private final JCheckBox chkWarmupFind;
     private final JCheckBox chkExperiment;
+    private final JComboBox<String> cbStrategy;
     private final JSlider sldSpeed;
     private final JLabel lblSimTime;
     private final JLabel lblReplications;
@@ -64,6 +65,10 @@ public class ControlPanel extends JPanel implements ISimDelegate {
         chkAnimation = new JCheckBox("Animácia");
         chkWarmupFind = new JCheckBox("Hľadanie zahrievania");
         chkExperiment = new JCheckBox("Experiment");
+
+        cbStrategy = new JComboBox<>(new String[]{"Základná", "Šetrenie ambulancií A", "Preferovanie sanitiek", "Preferovanie vyšetrenia"});
+        cbStrategy.setMaximumSize(cbStrategy.getPreferredSize());
+
         sldSpeed = new JSlider(1, 101, 11);
         sldSpeed.setEnabled(false);
         sldSpeed.setPreferredSize(new Dimension(300, 50));
@@ -72,7 +77,7 @@ public class ControlPanel extends JPanel implements ISimDelegate {
         sldSpeed.setMinorTickSpacing(10);
         sldSpeed.setPaintTicks(true);
         sldSpeed.setPaintLabels(true);
-        
+
         java.util.Hashtable<Integer, JLabel> labelTable = new java.util.Hashtable<>();
         labelTable.put(1, new JLabel("0.1x"));
         labelTable.put(11, new JLabel("1x"));
@@ -120,11 +125,13 @@ public class ControlPanel extends JPanel implements ISimDelegate {
         this.add(chkWarmupFind);
         this.add(Box.createHorizontalStrut(5));
         this.add(chkExperiment);
+        this.add(Box.createHorizontalStrut(5));
+        this.add(cbStrategy);
         this.add(Box.createHorizontalStrut(10));
         this.add(sldSpeed);
-        this.add(Box.createHorizontalStrut(15));
+        this.add(Box.createHorizontalStrut(10));
         this.add(lblSimTime);
-        this.add(Box.createHorizontalStrut(15));
+        this.add(Box.createHorizontalStrut(10));
         this.add(lblReplications);
         this.add(Box.createHorizontalGlue());
         this.add(btnPause);
@@ -237,6 +244,7 @@ public class ControlPanel extends JPanel implements ISimDelegate {
             } else {
                 core.setNursesCount(Integer.parseInt(txtNurses.getText()));
                 core.setDoctorsCount(Integer.parseInt(txtDoctors.getText()));
+                core.setStrategyType(cbStrategy.getSelectedIndex());
 
                 if (chkVisualization.isSelected()) {
                     core.setVisualizationEnabled(true);
@@ -317,6 +325,7 @@ public class ControlPanel extends JPanel implements ISimDelegate {
                 txtWarmupTime.setEnabled(!chkWarmupFind.isSelected());
                 txtNurses.setEnabled(true);
                 txtDoctors.setEnabled(true);
+                cbStrategy.setEnabled(true);
                 break;
             case running:
                 break;
@@ -328,11 +337,13 @@ public class ControlPanel extends JPanel implements ISimDelegate {
                 txtWarmupTime.setEnabled(false);
                 txtNurses.setEnabled(false);
                 txtDoctors.setEnabled(false);
+                cbStrategy.setEnabled(false);
                 break;
             case paused:
                 btnStart.setEnabled(false);
                 btnPause.setEnabled(true);
                 btnStop.setEnabled(true);
+                cbStrategy.setEnabled(false);
                 break;
         }
     }

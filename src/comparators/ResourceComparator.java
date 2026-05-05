@@ -4,6 +4,8 @@ import OSPABA.MessageForm;
 import simulation.Mc;
 import simulation.MyMessage;
 import entities.Patient;
+import simulation.MySimulation;
+
 import java.util.Comparator;
 
 /**
@@ -26,6 +28,13 @@ public class ResourceComparator implements Comparator<MessageForm> {
         if (msg1.code() == Mc.requestMedicalResources) {
             if (p1.getPriority() != p2.getPriority()) {
                 return Integer.compare(p1.getPriority(), p2.getPriority());
+            }
+
+            MySimulation sim = (MySimulation) msg1.mySim();
+            if (sim.getStrategyType() == MySimulation.STRATEGY_AMBULANCE_PREFERENCE) {
+                if (p1.isWithAmbulance() != p2.isWithAmbulance()) {
+                    return p1.isWithAmbulance() ? -1 : 1;
+                }
             }
         } else {
             if (p1.isWithAmbulance() != p2.isWithAmbulance()) {

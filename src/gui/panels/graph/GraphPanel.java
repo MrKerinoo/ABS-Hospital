@@ -12,14 +12,13 @@ public class GraphPanel extends JPanel implements ISimDelegate {
     private final MySimulation core;
     private final Graph graphWalk;
     private final Graph graphAmbulance;
-    private int replicationCounter = 0;
 
     public GraphPanel(MySimulation core) {
         this.core = core;
         this.setLayout(new GridLayout(2, 1));
 
-        this.graphWalk = new Graph("Čas od príchodu po ošetrenie - Pešo", "Počet replikácií", "Čas [s]");
-        this.graphAmbulance = new Graph("Čas od príchodu po ošetrenie - Sanitka", "Počet replikácií", "Čas [s]");
+        this.graphWalk = new Graph("Čas od príchodu po ošetrenie - Pešo", "Počet replikácií", "Čas [hh:mm:ss]");
+        this.graphAmbulance = new Graph("Čas od príchodu po ošetrenie - Sanitka", "Počet replikácií", "Čas [hh:mm:ss]");
 
         this.add(this.graphWalk.getChartPanel());
         this.add(this.graphAmbulance.getChartPanel());

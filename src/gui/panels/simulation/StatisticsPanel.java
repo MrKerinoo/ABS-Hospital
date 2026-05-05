@@ -143,7 +143,7 @@ public class StatisticsPanel extends JPanel {
         // 3. Systémové časy
         localPanel.add(createSection("Čas v systéme", new String[]{
                 "Celkovo:", "Peší:", "Sanitka:",
-                "Príchod -> Ambulancia (CELKOM):", "Príchod -> Ambulancia (PEŠÍ):", "Príchod -> Ambulancia (AMB):"
+                "Celkový čas čakania na ošetrenie  (CELKOM):", "Celkový čas čakania na ošetrenie  (PEŠÍ):", "Celkový čas čakania na ošetrenie (SANITKA):"
         }, new JLabel[]{
                 lAvgTimeInSystem, lTimeSysWalk, lTimeSysAmb,
                 lArrivalMedical, lArrivalMedicalWalk, lArrivalMedicalAmb
@@ -195,7 +195,7 @@ public class StatisticsPanel extends JPanel {
         // 3. Systémové časy
         globalPanel.add(createSection("Čas v systéme", new String[]{
                 "Celkovo:", "Peší:", "Sanitka:",
-                "Príchod -> Ambulancia (CELKOM):", "Príchod -> Ambulancia (PEŠÍ):", "Príchod -> Ambulancia (AMB):"
+                "Celkový čas čakania na ošetrenie (CELKOM):", "Celkový čas čakania na ošetrenie (PEŠÍ):", "Celkový čas čakania na ošetrenie (SANITKA):"
         }, new JLabel[]{
                 gAvgTimeInSystem, gIsTimeInSystem,
                 gTimeSysWalk, gIsTimeSysWalk,

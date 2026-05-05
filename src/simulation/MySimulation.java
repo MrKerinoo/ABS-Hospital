@@ -23,8 +23,14 @@ public class MySimulation extends OSPABA.Simulation
     private List<List<Double>> wipData;
     private int totalReplications;
 
+    public static final int STRATEGY_BASIC = 0;
+    public static final int STRATEGY_SAVING_A = 1;
+    public static final int STRATEGY_AMBULANCE_PREFERENCE = 2;
+    public static final int STRATEGY_EXAM_PREFERENCE = 3;
+
     private int nursesCount;
     private int doctorsCount;
+    private int strategyType = STRATEGY_BASIC;
 
     // GLOBAL STATISTICS
 
@@ -322,6 +328,14 @@ public AgentMedicalExam agentMedicalExam()
 
     public void setDoctorsCount(int doctorsCount) {
         this.doctorsCount = doctorsCount;
+    }
+
+    public int getStrategyType() {
+        return strategyType;
+    }
+
+    public void setStrategyType(int strategyType) {
+        this.strategyType = strategyType;
     }
 
     public DiscreteStatistics getPatientsIn() {

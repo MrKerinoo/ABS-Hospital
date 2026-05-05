@@ -13,7 +13,7 @@ public class PersonnelPanel extends JPanel {
 
     private final DefaultTableModel tableModel;
     private final JLabel countLabel;
-    private final String personnelType; // "D" pre doktorov, "S" pre sestry
+    private final String personnelType;
     private MySimulation core;
 
     public PersonnelPanel(MySimulation core, String title, String[] columns, String personnelType) {
@@ -51,7 +51,7 @@ public class PersonnelPanel extends JPanel {
 
         JTable table = new JTable(tableModel);
         JScrollPane scroll = new JScrollPane(table);
-        // Nastavenie výšky podľa tvojho QueuePanelu
+
         int rowHeight = table.getRowHeight();
         int headerHeight = table.getTableHeader().getPreferredSize().height;
         scroll.setPreferredSize(new Dimension(0, rowHeight * 15 + headerHeight + 2));
