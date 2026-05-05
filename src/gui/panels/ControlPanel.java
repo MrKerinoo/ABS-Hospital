@@ -24,6 +24,7 @@ public class ControlPanel extends JPanel implements ISimDelegate {
     private final JTextField txtReplications;
     private final JTextField txtNurses;
     private final JTextField txtDoctors;
+    private final JTextField txtWarmupTime;
     private final JCheckBox chkVisualization;
     private final JCheckBox chkAnimation;
     private final JCheckBox chkWarmupFind;
@@ -47,6 +48,10 @@ public class ControlPanel extends JPanel implements ISimDelegate {
         btnStart = new JButton("Spustiť");
         txtReplications = new JTextField("1000", 4);
         txtReplications.setMaximumSize(txtReplications.getPreferredSize());
+
+        // Warmup time
+        txtWarmupTime = new JTextField("86700", 6);
+        txtWarmupTime.setMaximumSize(txtWarmupTime.getPreferredSize());
 
         // Resource configuration
         txtNurses = new JTextField("8", 3);
@@ -83,6 +88,11 @@ public class ControlPanel extends JPanel implements ISimDelegate {
         this.add(Box.createHorizontalStrut(10));
         this.add(new JLabel("Replikácie:"));
         this.add(txtReplications);
+        this.add(Box.createHorizontalStrut(10));
+        this.add(new JLabel("Zahrievanie [s]:"));
+        this.add(txtWarmupTime);
+        this.add(Box.createHorizontalStrut(5));
+        txtWarmupTime.setEnabled(!chkWarmupFind.isSelected());
         this.add(Box.createHorizontalStrut(10));
         this.add(new JLabel("Sestry:"));
         this.add(txtNurses);
@@ -186,6 +196,12 @@ public class ControlPanel extends JPanel implements ISimDelegate {
             core.setWarmupFind(chkWarmupFind.isSelected());
             core.setTotalReplications(replCount);
             core.setMaxSimSpeed();
+//
+//            if (chkWarmupFind.isSelected()) {
+//                core.setWarmupTime(0);
+//            } else {
+//                core.setWarmupTime(Double.parseDouble(txtWarmupTime.getText()));
+//            }
 
             if (chkExperiment.isSelected()) {
                 experimentPanel.startAnalysis(replCount);
@@ -193,10 +209,13 @@ public class ControlPanel extends JPanel implements ISimDelegate {
                 core.setNursesCount(Integer.parseInt(txtNurses.getText()));
                 core.setDoctorsCount(Integer.parseInt(txtDoctors.getText()));
 
-                if (chkVisualization.isSelected()) core.setSimSpeed(1, computeDuration());
-                else core.setMaxSimSpeed();
+                if (chkVisualization.isSelected()) {
+                    core.setSimSpeed(1, computeDuration());
+                } else {
+                    core.setMaxSimSpeed();
+                }
 
-                simThread = new Thread(() -> core.simulate(replCount, 2_419_200));
+                simThread = new Thread(() -> core.simulate(replCount, 2_419_200 + core.getWarmupTime()));
                 simThread.start();
             }
         } catch (NumberFormatException ex) {

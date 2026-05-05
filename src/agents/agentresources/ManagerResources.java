@@ -247,6 +247,14 @@ public class ManagerResources extends OSPABA.Manager
 	{
 		switch (message.code())
 		{
+		case Mc.releaseMedicalResources:
+			processReleaseMedicalResources(message);
+		break;
+
+		case Mc.finish:
+			processFinish(message);
+		break;
+
 		case Mc.requestEntranceResources:
 			processRequestEntranceResources(message);
 		break;
@@ -257,14 +265,6 @@ public class ManagerResources extends OSPABA.Manager
 
 		case Mc.requestMedicalResources:
 			processRequestMedicalResources(message);
-		break;
-
-		case Mc.finish:
-			processFinish(message);
-		break;
-
-		case Mc.releaseMedicalResources:
-			processReleaseMedicalResources(message);
 		break;
 
 		default:

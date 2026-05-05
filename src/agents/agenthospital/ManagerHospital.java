@@ -290,15 +290,19 @@ public class ManagerHospital extends OSPABA.Manager
 	{
 		switch (message.code())
 		{
+		case Mc.entranceExamination:
+			processEntranceExamination(message);
+		break;
+
 		case Mc.finish:
 			switch (message.sender().id())
 			{
-			case Id.processMoveAmbulancePatient:
-				processFinishProcessMoveAmbulancePatient(message);
-			break;
-
 			case Id.processMoveExitPatient:
 				processFinishProcessMoveExitPatient(message);
+			break;
+
+			case Id.processMoveAmbulancePatient:
+				processFinishProcessMoveAmbulancePatient(message);
 			break;
 
 			case Id.processMoveEntrancePatient:
@@ -311,20 +315,16 @@ public class ManagerHospital extends OSPABA.Manager
 			processRequestEntranceResources(message);
 		break;
 
-		case Mc.entranceExamination:
-			processEntranceExamination(message);
-		break;
-
-		case Mc.requestMedicalResources:
-			processRequestMedicalResources(message);
+		case Mc.medicalExamination:
+			processMedicalExamination(message);
 		break;
 
 		case Mc.patientCare:
 			processPatientCare(message);
 		break;
 
-		case Mc.medicalExamination:
-			processMedicalExamination(message);
+		case Mc.requestMedicalResources:
+			processRequestMedicalResources(message);
 		break;
 
 		default:

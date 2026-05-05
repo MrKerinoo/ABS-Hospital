@@ -149,6 +149,14 @@ public class ManagerEnvironment extends OSPABA.Manager
 
             startContinualAssistant(wipMsg);
         }
+
+        if (!((MySimulation) mySim()).isWarmupFind()) {
+            MyMessage warmupMessage = new MyMessage(mySim());
+
+            warmupMessage.setAddressee(myAgent().findAssistant(Id.schedulerWarmup));
+
+            startContinualAssistant(warmupMessage);
+        }
 	}
 
 	//meta! sender="SchedulerWarmupFind", id="149", type="Finish"
@@ -169,6 +177,12 @@ public class ManagerEnvironment extends OSPABA.Manager
         startContinualAssistant(message);
 	}
 
+	//meta! sender="SchedulerWarmup", id="155", type="Finish"
+	public void processFinishSchedulerWarmup(MessageForm message)
+	{
+        ((MySimulation) mySim()).resetAllStats();
+	}
+
 	//meta! userInfo="Generated code: do not modify", tag="begin"
 	public void init()
 	{
@@ -179,29 +193,33 @@ public class ManagerEnvironment extends OSPABA.Manager
 	{
 		switch (message.code())
 		{
+		case Mc.patientExit:
+			processPatientExit(message);
+		break;
+
 		case Mc.finish:
 			switch (message.sender().id())
 			{
-			case Id.schedulerWarmupFind:
-				processFinishSchedulerWarmupFind(message);
+			case Id.schedulerWalk:
+				processFinishSchedulerWalk(message);
 			break;
 
 			case Id.schedulerAmbulanceCar:
 				processFinishSchedulerAmbulanceCar(message);
 			break;
 
-			case Id.schedulerWalk:
-				processFinishSchedulerWalk(message);
+			case Id.schedulerWarmupFind:
+				processFinishSchedulerWarmupFind(message);
+			break;
+
+			case Id.schedulerWarmup:
+				processFinishSchedulerWarmup(message);
 			break;
 			}
 		break;
 
 		case Mc.noticeInit:
 			processNoticeInit(message);
-		break;
-
-		case Mc.patientExit:
-			processPatientExit(message);
 		break;
 
 		default:

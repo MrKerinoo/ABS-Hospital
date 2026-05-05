@@ -139,12 +139,18 @@ public class AgentResources extends OSPABA.Agent
 		new ManagerResources(Id.managerResources, mySim(), this);
 		new ProcessMovePersonnel(Id.processMovePersonnel, mySim(), this);
 		addOwnMessage(Mc.releaseEntranceResources);
-		addOwnMessage(Mc.requestMedicalResources);
 		addOwnMessage(Mc.releaseMedicalResources);
+		addOwnMessage(Mc.requestMedicalResources);
 		addOwnMessage(Mc.requestEntranceResources);
 	}
 	//meta! tag="end"
 
+    public void resetLocalStats() {
+        this.doctorUsage.reset();
+        this.nurseUsage.reset();
+        this.ambulanceAUsage.reset();
+        this.ambulanceBUsage.reset();
+    }
 
     public List<Nurse> getFreeNurses() {
         return freeNurses;

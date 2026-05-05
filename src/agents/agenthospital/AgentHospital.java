@@ -96,9 +96,9 @@ public class AgentHospital extends OSPABA.Agent
 	private void init()
 	{
 		new ManagerHospital(Id.managerHospital, mySim(), this);
-		new ProcessMoveEntrancePatient(Id.processMoveEntrancePatient, mySim(), this);
-		new ProcessMoveExitPatient(Id.processMoveExitPatient, mySim(), this);
 		new ProcessMoveAmbulancePatient(Id.processMoveAmbulancePatient, mySim(), this);
+		new ProcessMoveExitPatient(Id.processMoveExitPatient, mySim(), this);
+		new ProcessMoveEntrancePatient(Id.processMoveEntrancePatient, mySim(), this);
 		addOwnMessage(Mc.patientCare);
 		addOwnMessage(Mc.entranceExamination);
 		addOwnMessage(Mc.requestMedicalResources);
@@ -107,6 +107,23 @@ public class AgentHospital extends OSPABA.Agent
 	}
 	//meta! tag="end"
 
+    public void resetLocalStats() {
+        this.entranceQueueLength.reset();
+        this.medicalQueueLength.reset();
+
+        this.waitEntrance.reset();
+        this.waitMedical.reset();
+        this.waitEntranceWalk.reset();
+        this.waitEntranceAmbulance.reset();
+        this.waitMedicalWalk.reset();
+        this.waitMedicalAmbulance.reset();
+
+        this.timeFromArrivalToMedicalExam.reset();
+        this.timeFromArrivalToMedicalExamWalk.reset();
+        this.timeFromArrivalToMedicalExamAmbulance.reset();
+
+        this.medicalQueueSize = 0;
+    }
 
     public PriorityQueue<MyMessage> getEntranceQueue() {
         return entranceQueue;

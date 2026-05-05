@@ -4,13 +4,10 @@ import OSPABA.*;
 import simulation.*;
 import agents.agentenvironment.*;
 
-import java.util.ArrayList;
-import java.util.List;
-
-//meta! id="148"
-public class SchedulerWarmupFind extends OSPABA.Scheduler
+//meta! id="154"
+public class SchedulerWarmup extends OSPABA.Scheduler
 {
-	public SchedulerWarmupFind(int id, Simulation mySim, CommonAgent myAgent)
+	public SchedulerWarmup(int id, Simulation mySim, CommonAgent myAgent)
 	{
 		super(id, mySim, myAgent);
 	}
@@ -22,11 +19,11 @@ public class SchedulerWarmupFind extends OSPABA.Scheduler
 		// Setup component for the next replication
 	}
 
-	//meta! sender="AgentEnvironment", id="149", type="Start"
+	//meta! sender="AgentEnvironment", id="155", type="Start"
 	public void processStart(MessageForm message)
 	{
         message.setCode(Mc.finish);
-        hold(3600, message);
+        hold(86_400, message);
 	}
 
 	//meta! userInfo="Process messages defined in code", id="0"

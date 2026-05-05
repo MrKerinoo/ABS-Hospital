@@ -63,13 +63,27 @@ public class AgentEnvironment extends OSPABA.Agent
 	private void init()
 	{
 		new ManagerEnvironment(Id.managerEnvironment, mySim(), this);
-		new SchedulerAmbulanceCar(Id.schedulerAmbulanceCar, mySim(), this);
 		new SchedulerWalk(Id.schedulerWalk, mySim(), this);
+		new SchedulerAmbulanceCar(Id.schedulerAmbulanceCar, mySim(), this);
+		new SchedulerWarmup(Id.schedulerWarmup, mySim(), this);
 		new SchedulerWarmupFind(Id.schedulerWarmupFind, mySim(), this);
 		addOwnMessage(Mc.patientExit);
 		addOwnMessage(Mc.noticeInit);
 	}
 	//meta! tag="end"
+
+    public void resetLocalStats() {
+        this.patientsIn = 0;
+        this.patientsOut = 0;
+        this.patientsInWalk = 0;
+        this.patientsInAmbulance = 0;
+        this.patientsOutWalk = 0;
+        this.patientsOutAmbulance = 0;
+
+        this.timeInSystem.reset();
+        this.timeInSystemWalk.reset();
+        this.timeInSystemAmbulance.reset();
+    }
 
     public ExponentialGenerator getPatientWalkGenerator() {
         return patientWalkGenerator;

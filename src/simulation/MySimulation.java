@@ -9,7 +9,6 @@ import agents.agententranceexam.*;
 import agents.agenthospital.*;
 import gui.panels.simulation.SimulationPanel;
 import statistics.DiscreteStatistics;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -18,6 +17,7 @@ public class MySimulation extends OSPABA.Simulation
 {
     private Random random;
     private boolean warmupFind;
+    private double warmupTime = 0;
     private List<List<Double>> wipData;
     private int totalReplications;
 
@@ -228,6 +228,12 @@ public AgentMedicalExam agentMedicalExam()
 	{_agentMedicalExam = agentMedicalExam; }
 	//meta! tag="end"
 
+    public void resetAllStats() {
+        agentEnvironment().resetLocalStats();
+        agentHospital().resetLocalStats();
+        agentResources().resetLocalStats();
+    }
+
     public void logEvent(String message) {
         if (!this.isMaxSpeed()) {
             for (ISimDelegate delegate : delegates()) {
@@ -269,12 +275,20 @@ public AgentMedicalExam agentMedicalExam()
         return doctorsCount;
     }
 
+    public double getWarmupTime() {
+        return warmupTime;
+    }
+
     public List<List<Double>> getWipData() {
         return wipData;
     }
 
     public int getTotalReplications() {
         return totalReplications;
+    }
+
+    public void setWarmupTime(double warmupTime) {
+        this.warmupTime = warmupTime;
     }
 
     public void setWarmupFind(boolean warmupFind) {
