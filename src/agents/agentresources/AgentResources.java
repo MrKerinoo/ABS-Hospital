@@ -10,7 +10,6 @@ import entities.Nurse;
 import generators.ContinuousGenerator;
 import generators.TriangularGenerator;
 import statistics.TimeStatistics;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.PriorityQueue;
@@ -213,9 +212,9 @@ public class AgentResources extends OSPABA.Agent
 
     public void recordDoctorUsage() {
         double val = (double)(allDoctors.size() - freeDoctors.size()) / allDoctors.size();
-        if (val < 0) {
-            System.out.println("ZÁPORNÉ VYŤAŽENIE! Voľných: " + freeDoctors.size() + " z " + allDoctors.size());
-        }
+//        if (val < 0) {
+//            System.out.println("ZÁPORNÉ VYŤAŽENIE! Voľných: " + freeDoctors.size() + " z " + allDoctors.size());
+//        }
         doctorUsage.add(val);
     }
 

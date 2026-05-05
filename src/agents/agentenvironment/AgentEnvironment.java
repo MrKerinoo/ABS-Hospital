@@ -63,8 +63,9 @@ public class AgentEnvironment extends OSPABA.Agent
 	private void init()
 	{
 		new ManagerEnvironment(Id.managerEnvironment, mySim(), this);
-		new SchedulerWalk(Id.schedulerWalk, mySim(), this);
 		new SchedulerAmbulanceCar(Id.schedulerAmbulanceCar, mySim(), this);
+		new SchedulerWalk(Id.schedulerWalk, mySim(), this);
+		new SchedulerWarmupFind(Id.schedulerWarmupFind, mySim(), this);
 		addOwnMessage(Mc.patientExit);
 		addOwnMessage(Mc.noticeInit);
 	}

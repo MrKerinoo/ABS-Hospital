@@ -4,6 +4,9 @@ import OSPABA.*;
 import entities.Patient;
 import simulation.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 //meta! id="2"
 public class ManagerEnvironment extends OSPABA.Manager
 {
@@ -138,6 +141,32 @@ public class ManagerEnvironment extends OSPABA.Manager
 
         copyMessage.setAddressee(myAgent().findAssistant(Id.schedulerAmbulanceCar));
         startContinualAssistant(copyMessage);
+
+        if (((MySimulation) mySim()).isWarmupFind()) {
+            MyMessage wipMsg = new MyMessage(mySim());
+
+            wipMsg.setAddressee(myAgent().findAssistant(Id.schedulerWarmupFind));
+
+            startContinualAssistant(wipMsg);
+        }
+	}
+
+	//meta! sender="SchedulerWarmupFind", id="149", type="Finish"
+	public void processFinishSchedulerWarmupFind(MessageForm message)
+	{
+        int hourIndex = (int)(mySim().currentTime() / 3600);
+        List<List<Double>> wipData = ((MySimulation) mySim()).getWipData();
+
+        while (wipData.size() <= hourIndex) {
+            wipData.add(new ArrayList<>());
+        }
+
+        int currentCount = myAgent().getPatientsIn() - myAgent().getPatientsOut();
+
+        wipData.get(hourIndex).add((double) currentCount);
+
+        message.setAddressee(myAgent().findAssistant(Id.schedulerWarmupFind));
+        startContinualAssistant(message);
 	}
 
 	//meta! userInfo="Generated code: do not modify", tag="begin"
@@ -150,25 +179,29 @@ public class ManagerEnvironment extends OSPABA.Manager
 	{
 		switch (message.code())
 		{
+		case Mc.finish:
+			switch (message.sender().id())
+			{
+			case Id.schedulerWarmupFind:
+				processFinishSchedulerWarmupFind(message);
+			break;
+
+			case Id.schedulerAmbulanceCar:
+				processFinishSchedulerAmbulanceCar(message);
+			break;
+
+			case Id.schedulerWalk:
+				processFinishSchedulerWalk(message);
+			break;
+			}
+		break;
+
 		case Mc.noticeInit:
 			processNoticeInit(message);
 		break;
 
 		case Mc.patientExit:
 			processPatientExit(message);
-		break;
-
-		case Mc.finish:
-			switch (message.sender().id())
-			{
-			case Id.schedulerWalk:
-				processFinishSchedulerWalk(message);
-			break;
-
-			case Id.schedulerAmbulanceCar:
-				processFinishSchedulerAmbulanceCar(message);
-			break;
-			}
 		break;
 
 		default:

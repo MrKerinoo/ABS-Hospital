@@ -136,15 +136,10 @@ public class ManagerHospital extends OSPABA.Manager
         myAgent().getEntranceQueueLength().add(myAgent().getEntranceQueue().size());
         myAgent().getWaitEntrance().add(waitTime);
 
-        double entranceTime = mySim().currentTime() - msg.getPatient().getArrivalTime();
-        myAgent().getTimeFromArrivalToEntranceExam().add(entranceTime);
-
         if (msg.getPatient().isWithAmbulance()) {
             myAgent().getWaitEntranceAmbulance().add(waitTime);
-            myAgent().getTimeFromArrivalToEntranceExamAmbulance().add(entranceTime);
         } else {
             myAgent().getWaitEntranceWalk().add(waitTime);
-            myAgent().getTimeFromArrivalToEntranceExamWalk().add(entranceTime);
         }
 
         if (!mySim().isMaxSpeed()) {
@@ -189,10 +184,18 @@ public class ManagerHospital extends OSPABA.Manager
         myAgent().decrementMedicalQueue();
         myAgent().getWaitMedical().add(waitTime);
 
+        double entranceTime = mySim().currentTime() - msg.getPatient().getArrivalTime();
+
+        myAgent().getTimeFromArrivalToMedicalExam().add(entranceTime);
+
         if (patient.isWithAmbulance()) {
             myAgent().getWaitMedicalAmbulance().add(waitTime);
+            myAgent().getTimeFromArrivalToMedicalExamAmbulance().add(entranceTime);
+
         } else {
             myAgent().getWaitMedicalWalk().add(waitTime);
+            myAgent().getTimeFromArrivalToMedicalExamWalk().add(entranceTime);
+
         }
 
         msg.getAmbulance().setPatient(patient);
@@ -260,8 +263,8 @@ public class ManagerHospital extends OSPABA.Manager
         request(msg);
     }
 
-    //meta! sender="ProcessMoveExitPatient", id="142", type="Finish"
-    public void processFinishProcessMoveExitPatient(MessageForm message)
+	//meta! sender="ProcessMoveExitPatient", id="142", type="Finish"
+	public void processFinishProcessMoveExitPatient(MessageForm message)
     {
         MyMessage msg = (MyMessage) message;
 
@@ -290,38 +293,38 @@ public class ManagerHospital extends OSPABA.Manager
 		case Mc.finish:
 			switch (message.sender().id())
 			{
-			case Id.processMoveEntrancePatient:
-				processFinishProcessMoveEntrancePatient(message);
+			case Id.processMoveAmbulancePatient:
+				processFinishProcessMoveAmbulancePatient(message);
 			break;
 
 			case Id.processMoveExitPatient:
 				processFinishProcessMoveExitPatient(message);
 			break;
 
-			case Id.processMoveAmbulancePatient:
-				processFinishProcessMoveAmbulancePatient(message);
+			case Id.processMoveEntrancePatient:
+				processFinishProcessMoveEntrancePatient(message);
 			break;
 			}
-		break;
-
-		case Mc.medicalExamination:
-			processMedicalExamination(message);
-		break;
-
-		case Mc.entranceExamination:
-			processEntranceExamination(message);
-		break;
-
-		case Mc.patientCare:
-			processPatientCare(message);
 		break;
 
 		case Mc.requestEntranceResources:
 			processRequestEntranceResources(message);
 		break;
 
+		case Mc.entranceExamination:
+			processEntranceExamination(message);
+		break;
+
 		case Mc.requestMedicalResources:
 			processRequestMedicalResources(message);
+		break;
+
+		case Mc.patientCare:
+			processPatientCare(message);
+		break;
+
+		case Mc.medicalExamination:
+			processMedicalExamination(message);
 		break;
 
 		default:

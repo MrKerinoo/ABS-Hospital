@@ -4,6 +4,7 @@ import OSPABA.ISimDelegate;
 import OSPABA.SimState;
 import OSPABA.Simulation;
 import gui.panels.animation.AnimationPanel;
+import gui.panels.experiment.ExperimentPanel;
 import simulation.MySimulation;
 import utils.Utils;
 
@@ -15,6 +16,7 @@ public class ControlPanel extends JPanel implements ISimDelegate {
     private final MySimulation core;
     private Thread simThread;
     private final AnimationPanel animationPanel;
+    private final ExperimentPanel experimentPanel;
 
     private final JButton btnStart;
     private final JButton btnPause;
@@ -25,13 +27,15 @@ public class ControlPanel extends JPanel implements ISimDelegate {
     private final JCheckBox chkVisualization;
     private final JCheckBox chkAnimation;
     private final JCheckBox chkWarmupFind;
+    private final JCheckBox chkExperiment;
     private final JSlider sldSpeed;
     private final JLabel lblSimTime;
     private final JLabel lblReplications;
 
-    public ControlPanel(MySimulation core, AnimationPanel animPanel) {
+    public ControlPanel(MySimulation core, AnimationPanel animPanel, ExperimentPanel experimentPanel) {
         this.core = core;
         this.animationPanel = animPanel;
+        this.experimentPanel = experimentPanel;
 
         this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
         this.setBorder(BorderFactory.createCompoundBorder(
@@ -54,6 +58,7 @@ public class ControlPanel extends JPanel implements ISimDelegate {
         chkVisualization = new JCheckBox("Vizualizácia");
         chkAnimation = new JCheckBox("Animácia");
         chkWarmupFind = new JCheckBox("Hľadanie zahrievania");
+        chkExperiment = new JCheckBox("Experiment");
         sldSpeed = new JSlider(1, 100, 10);
         sldSpeed.setEnabled(false);
         sldSpeed.setMaximumSize(new Dimension(120, 30));
@@ -90,6 +95,8 @@ public class ControlPanel extends JPanel implements ISimDelegate {
         this.add(chkAnimation);
         this.add(Box.createHorizontalStrut(5));
         this.add(chkWarmupFind);
+        this.add(Box.createHorizontalStrut(5));
+        this.add(chkExperiment);
         this.add(Box.createHorizontalStrut(10));
         this.add(sldSpeed);
         this.add(Box.createHorizontalStrut(15));
@@ -119,7 +126,13 @@ public class ControlPanel extends JPanel implements ISimDelegate {
             else core.pauseSimulation();
         });
 
-        btnStop.addActionListener(e -> core.stopSimulation());
+        btnStop.addActionListener(e -> {
+            if (core.isPaused()) {
+                core.resumeSimulation();
+            }
+            core.stopSimulation();
+            experimentPanel.stopAnalysis();
+        });
 
         // Animation logic using handleAnimation from AnimationPanel
         chkAnimation.addActionListener(e -> {
@@ -170,19 +183,22 @@ public class ControlPanel extends JPanel implements ISimDelegate {
     private void runSim() {
         try {
             int replCount = Integer.parseInt(txtReplications.getText());
-            core.setNursesCount(Integer.parseInt(txtNurses.getText()));
-            core.setDoctorsCount(Integer.parseInt(txtDoctors.getText()));
             core.setWarmupFind(chkWarmupFind.isSelected());
+            core.setTotalReplications(replCount);
+            core.setMaxSimSpeed();
 
-            if (chkVisualization.isSelected()) {
-                core.setSimSpeed(1, computeDuration());
-            }
-            else {
-                core.setMaxSimSpeed();
-            }
+            if (chkExperiment.isSelected()) {
+                experimentPanel.startAnalysis(replCount);
+            } else {
+                core.setNursesCount(Integer.parseInt(txtNurses.getText()));
+                core.setDoctorsCount(Integer.parseInt(txtDoctors.getText()));
 
-            simThread = new Thread(() -> core.simulate(replCount, 2_419_200));
-            simThread.start();
+                if (chkVisualization.isSelected()) core.setSimSpeed(1, computeDuration());
+                else core.setMaxSimSpeed();
+
+                simThread = new Thread(() -> core.simulate(replCount, 2_419_200));
+                simThread.start();
+            }
         } catch (NumberFormatException ex) {
             JOptionPane.showMessageDialog(this, "Invalid input values.");
         }
@@ -261,7 +277,7 @@ public class ControlPanel extends JPanel implements ISimDelegate {
 
     private void updateAfterRepl() {
         SwingUtilities.invokeLater(() -> {
-            lblReplications.setText("Replikácie: " + core.currentReplication() + "/" + txtReplications.getText());
+            lblReplications.setText("Replikácie: " + (core.currentReplication() + 1) + "/" + txtReplications.getText());
         });
     }
 }

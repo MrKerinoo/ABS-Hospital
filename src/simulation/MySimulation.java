@@ -9,12 +9,17 @@ import agents.agententranceexam.*;
 import agents.agenthospital.*;
 import gui.panels.simulation.SimulationPanel;
 import statistics.DiscreteStatistics;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class MySimulation extends OSPABA.Simulation
 {
     private Random random;
     private boolean warmupFind;
+    private List<List<Double>> wipData;
+    private int totalReplications;
 
     private int nursesCount;
     private int doctorsCount;
@@ -42,9 +47,9 @@ public class MySimulation extends OSPABA.Simulation
     private DiscreteStatistics waitMedicalWalk;
     private DiscreteStatistics waitMedicalAmbulance;
 
-    private DiscreteStatistics arrivalToEntrance;
-    private DiscreteStatistics arrivalToEntranceWalk;
-    private DiscreteStatistics arrivalToEntranceAmb;
+    private DiscreteStatistics arrivalToMedical;
+    private DiscreteStatistics arrivalToMedicalWalk;
+    private DiscreteStatistics arrivalToMedicalAmb;
 
     private DiscreteStatistics doctorUsage;
     private DiscreteStatistics nurseUsage;
@@ -87,9 +92,9 @@ public class MySimulation extends OSPABA.Simulation
         waitMedicalWalk = new DiscreteStatistics();
         waitMedicalAmbulance = new DiscreteStatistics();
 
-        arrivalToEntrance = new DiscreteStatistics();
-        arrivalToEntranceWalk = new DiscreteStatistics();
-        arrivalToEntranceAmb = new DiscreteStatistics();
+        arrivalToMedical = new DiscreteStatistics();
+        arrivalToMedicalWalk = new DiscreteStatistics();
+        arrivalToMedicalAmb = new DiscreteStatistics();
 
         doctorUsage = new DiscreteStatistics();
         nurseUsage = new DiscreteStatistics();
@@ -97,6 +102,7 @@ public class MySimulation extends OSPABA.Simulation
         ambulanceBUsage = new DiscreteStatistics();
 
         this.random = new Random(1);
+        wipData = new ArrayList<>();
 	}
 
 	@Override
@@ -110,6 +116,8 @@ public class MySimulation extends OSPABA.Simulation
 	@Override
 	public void replicationFinished()
 	{
+        if (!isRunning()) return;
+
         patientsIn.add(agentEnvironment().getPatientsIn());
         patientsOut.add(agentEnvironment().getPatientsOut());
         patientsInWalk.add(agentEnvironment().getPatientsInWalk());
@@ -130,9 +138,9 @@ public class MySimulation extends OSPABA.Simulation
         waitMedicalWalk.add(agentHospital().getWaitMedicalWalk().getMean());
         waitMedicalAmbulance.add(agentHospital().getWaitMedicalAmbulance().getMean());
 
-        arrivalToEntrance.add(agentHospital().getTimeFromArrivalToEntranceExam().getMean());
-        arrivalToEntranceWalk.add(agentHospital().getTimeFromArrivalToEntranceExamWalk().getMean());
-        arrivalToEntranceAmb.add(agentHospital().getTimeFromArrivalToEntranceExamAmbulance().getMean());
+        arrivalToMedical.add(agentHospital().getTimeFromArrivalToMedicalExam().getMean());
+        arrivalToMedicalWalk.add(agentHospital().getTimeFromArrivalToMedicalExamWalk().getMean());
+        arrivalToMedicalAmb.add(agentHospital().getTimeFromArrivalToMedicalExamAmbulance().getMean());
 
         doctorUsage.add(agentResources().getDoctorUsage().getMean());
         nurseUsage.add(agentResources().getNurseUsage().getMean());
@@ -150,6 +158,10 @@ public class MySimulation extends OSPABA.Simulation
 	@Override
 	public void simulationFinished()
 	{
+        System.out.println("KONIEC SIMULACIE");
+        if (warmupFind) {
+            this.exportWipToCSV();
+        }
 		// Display simulation results
         if(animator()!=null)animator().clearAll();
 
@@ -226,6 +238,25 @@ public AgentMedicalExam agentMedicalExam()
         }
     }
 
+    private void exportWipToCSV() {
+        java.io.File folder = new java.io.File("./data");
+        if (!folder.exists()) {
+            folder.mkdirs();
+        }
+
+        try (java.io.FileWriter writer = new java.io.FileWriter("./data/warmup_wip.csv")) {
+            writer.write("Hodina;Priemer\n");
+            for (int i = 0; i < wipData.size(); i++) {
+                List<Double> vals = wipData.get(i);
+                double avg = vals.stream().mapToDouble(d -> d).average().orElse(0);
+                writer.write(i + ";" + String.format("%.2f", avg).replace('.', ',') + "\n");
+            }
+            System.out.println("WIP export hotový: ./data/warmup_wip.csv");
+        } catch (java.io.IOException e) {
+            System.err.println("Chyba CSV: " + e.getMessage());
+        }
+    }
+
     public boolean isWarmupFind() {
         return warmupFind;
     }
@@ -238,8 +269,20 @@ public AgentMedicalExam agentMedicalExam()
         return doctorsCount;
     }
 
+    public List<List<Double>> getWipData() {
+        return wipData;
+    }
+
+    public int getTotalReplications() {
+        return totalReplications;
+    }
+
     public void setWarmupFind(boolean warmupFind) {
         this.warmupFind = warmupFind;
+    }
+
+    public void setTotalReplications(int totalReplications) {
+        this.totalReplications = totalReplications;
     }
 
     public void setNursesCount(int nursesCount) {
@@ -334,15 +377,15 @@ public AgentMedicalExam agentMedicalExam()
         return patientsOutAmbulance;
     }
 
-    public DiscreteStatistics getArrivalToEntrance() {
-        return arrivalToEntrance;
+    public DiscreteStatistics getArrivalToMedical() {
+        return arrivalToMedical;
     }
 
-    public DiscreteStatistics getArrivalToEntranceWalk() {
-        return arrivalToEntranceWalk;
+    public DiscreteStatistics getArrivalToMedicalWalk() {
+        return arrivalToMedicalWalk;
     }
 
-    public DiscreteStatistics getArrivalToEntranceAmb() {
-        return arrivalToEntranceAmb;
+    public DiscreteStatistics getArrivalToMedicalAmb() {
+        return arrivalToMedicalAmb;
     }
 }

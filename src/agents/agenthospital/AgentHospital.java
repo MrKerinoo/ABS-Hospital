@@ -8,7 +8,6 @@ import generators.TriangularGenerator;
 import comparators.ResourceComparator;
 import statistics.DiscreteStatistics;
 import statistics.TimeStatistics;
-
 import java.util.PriorityQueue;
 import java.util.Random;
 
@@ -46,9 +45,9 @@ public class AgentHospital extends OSPABA.Agent
     private DiscreteStatistics waitMedicalWalk;
     private DiscreteStatistics waitMedicalAmbulance;
 
-    private DiscreteStatistics timeFromArrivalToEntranceExam;
-    private DiscreteStatistics timeFromArrivalToEntranceExamWalk;
-    private DiscreteStatistics timeFromArrivalToEntranceExamAmbulance;
+    private DiscreteStatistics timeFromArrivalToMedicalExam;
+    private DiscreteStatistics timeFromArrivalToMedicalExamWalk;
+    private DiscreteStatistics timeFromArrivalToMedicalExamAmbulance;
 
 	public AgentHospital(int id, Simulation mySim, Agent parent)
 	{
@@ -86,9 +85,9 @@ public class AgentHospital extends OSPABA.Agent
         waitMedicalWalk = new DiscreteStatistics();;
         waitMedicalAmbulance = new DiscreteStatistics();;
 
-        timeFromArrivalToEntranceExam = new DiscreteStatistics();
-        timeFromArrivalToEntranceExamWalk = new DiscreteStatistics();
-        timeFromArrivalToEntranceExamAmbulance = new DiscreteStatistics();
+        timeFromArrivalToMedicalExam = new DiscreteStatistics();
+        timeFromArrivalToMedicalExamWalk = new DiscreteStatistics();
+        timeFromArrivalToMedicalExamAmbulance = new DiscreteStatistics();
 
         this.medicalQueueSize = 0;
     }
@@ -97,9 +96,9 @@ public class AgentHospital extends OSPABA.Agent
 	private void init()
 	{
 		new ManagerHospital(Id.managerHospital, mySim(), this);
-		new ProcessMoveAmbulancePatient(Id.processMoveAmbulancePatient, mySim(), this);
-		new ProcessMoveExitPatient(Id.processMoveExitPatient, mySim(), this);
 		new ProcessMoveEntrancePatient(Id.processMoveEntrancePatient, mySim(), this);
+		new ProcessMoveExitPatient(Id.processMoveExitPatient, mySim(), this);
+		new ProcessMoveAmbulancePatient(Id.processMoveAmbulancePatient, mySim(), this);
 		addOwnMessage(Mc.patientCare);
 		addOwnMessage(Mc.entranceExamination);
 		addOwnMessage(Mc.requestMedicalResources);
@@ -177,16 +176,16 @@ public class AgentHospital extends OSPABA.Agent
         return waitMedicalAmbulance;
     }
 
-    public DiscreteStatistics getTimeFromArrivalToEntranceExam() {
-        return timeFromArrivalToEntranceExam;
+    public DiscreteStatistics getTimeFromArrivalToMedicalExam() {
+        return timeFromArrivalToMedicalExam;
     }
 
-    public DiscreteStatistics getTimeFromArrivalToEntranceExamWalk() {
-        return timeFromArrivalToEntranceExamWalk;
+    public DiscreteStatistics getTimeFromArrivalToMedicalExamWalk() {
+        return timeFromArrivalToMedicalExamWalk;
     }
 
-    public DiscreteStatistics getTimeFromArrivalToEntranceExamAmbulance() {
-        return timeFromArrivalToEntranceExamAmbulance;
+    public DiscreteStatistics getTimeFromArrivalToMedicalExamAmbulance() {
+        return timeFromArrivalToMedicalExamAmbulance;
     }
 
     public void incrementMedicalQueue() {

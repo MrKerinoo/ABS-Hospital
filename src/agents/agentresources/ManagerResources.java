@@ -88,8 +88,8 @@ public class ManagerResources extends OSPABA.Manager
         }
 	}
 
-    //meta! sender="AgentHospital", id="116", type="Request"
-    public void processRequestMedicalResources(MessageForm message) {
+	//meta! sender="AgentHospital", id="116", type="Request"
+	public void processRequestMedicalResources(MessageForm message) {
         MyMessage msg = (MyMessage) message;
         int priority = msg.getPatient().getPriority();
 
@@ -247,6 +247,14 @@ public class ManagerResources extends OSPABA.Manager
 	{
 		switch (message.code())
 		{
+		case Mc.requestEntranceResources:
+			processRequestEntranceResources(message);
+		break;
+
+		case Mc.releaseEntranceResources:
+			processReleaseEntranceResources(message);
+		break;
+
 		case Mc.requestMedicalResources:
 			processRequestMedicalResources(message);
 		break;
@@ -255,16 +263,8 @@ public class ManagerResources extends OSPABA.Manager
 			processFinish(message);
 		break;
 
-		case Mc.releaseEntranceResources:
-			processReleaseEntranceResources(message);
-		break;
-
 		case Mc.releaseMedicalResources:
 			processReleaseMedicalResources(message);
-		break;
-
-		case Mc.requestEntranceResources:
-			processRequestEntranceResources(message);
 		break;
 
 		default:

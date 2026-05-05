@@ -32,9 +32,9 @@ public class StatisticsPanel extends JPanel {
     private final JLabel lTimeSysWalk      = new JLabel("00:00:00");
     private final JLabel lTimeSysAmb       = new JLabel("00:00:00");
 
-    private final JLabel lArrivalEnt      = new JLabel("00:00:00");
-    private final JLabel lArrivalEntWalk  = new JLabel("00:00:00");
-    private final JLabel lArrivalEntAmb   = new JLabel("00:00:00");
+    private final JLabel lArrivalMedical      = new JLabel("00:00:00");
+    private final JLabel lArrivalMedicalWalk  = new JLabel("00:00:00");
+    private final JLabel lArrivalMedicalAmb   = new JLabel("00:00:00");
 
     // --- Resource Usage ---
     private final JLabel lUsageDoctors     = new JLabel("0.00 %");
@@ -72,12 +72,12 @@ public class StatisticsPanel extends JPanel {
     private final JLabel gWaitEntAmb       = new JLabel("00:00:00");
     private final JLabel gIsWaitEntAmb     = new JLabel("<00:00:00, 00:00:00>");
 
-    private final JLabel gArrivalEnt      = new JLabel("00:00:00");
-    private final JLabel gIsArrivalEnt    = new JLabel("<00:00:00, 00:00:00>");
-    private final JLabel gArrivalEntWalk  = new JLabel("00:00:00");
-    private final JLabel gIsArrivalEntWalk = new JLabel("<00:00:00, 00:00:00>");
-    private final JLabel gArrivalEntAmb   = new JLabel("00:00:00");
-    private final JLabel gIsArrivalEntAmb = new JLabel("<00:00:00, 00:00:00>");
+    private final JLabel gArrivalMedical      = new JLabel("00:00:00");
+    private final JLabel gIsArrivalMedical    = new JLabel("<00:00:00, 00:00:00>");
+    private final JLabel gArrivalMedicalWalk  = new JLabel("00:00:00");
+    private final JLabel gIsArrivalMedicalWalk = new JLabel("<00:00:00, 00:00:00>");
+    private final JLabel gArrivalMedicalAmb   = new JLabel("00:00:00");
+    private final JLabel gIsArrivalMedicalAmb = new JLabel("<00:00:00, 00:00:00>");
 
     // Medical
     private final JLabel gWaitMedWalk      = new JLabel("00:00:00");
@@ -146,7 +146,7 @@ public class StatisticsPanel extends JPanel {
                 "Príchod -> Ambulancia (CELKOM):", "Príchod -> Ambulancia (PEŠÍ):", "Príchod -> Ambulancia (AMB):"
         }, new JLabel[]{
                 lAvgTimeInSystem, lTimeSysWalk, lTimeSysAmb,
-                lArrivalEnt, lArrivalEntWalk, lArrivalEntAmb
+                lArrivalMedical, lArrivalMedicalWalk, lArrivalMedicalAmb
         }));
 
         // 4. Pacienti
@@ -200,9 +200,9 @@ public class StatisticsPanel extends JPanel {
                 gAvgTimeInSystem, gIsTimeInSystem,
                 gTimeSysWalk, gIsTimeSysWalk,
                 gTimeSysAmb, gIsTimeSysAmb,
-                gArrivalEnt, gIsArrivalEnt,
-                gArrivalEntWalk, gIsArrivalEntWalk,
-                gArrivalEntAmb, gIsArrivalEntAmb
+                gArrivalMedical, gIsArrivalMedical,
+                gArrivalMedicalWalk, gIsArrivalMedicalWalk,
+                gArrivalMedicalAmb, gIsArrivalMedicalAmb
         }));
 
         // 4. Pacienti
@@ -292,9 +292,9 @@ public class StatisticsPanel extends JPanel {
         lAvgWaitEntrance.setText(formatTime(hosp.getWaitEntrance().getMean()));
         lAvgWaitMedical.setText(formatTime(hosp.getWaitMedical().getMean()));
 
-        lArrivalEnt.setText(formatTime(hosp.getTimeFromArrivalToEntranceExam().getMean()));
-        lArrivalEntWalk.setText(formatTime(hosp.getTimeFromArrivalToEntranceExamWalk().getMean()));
-        lArrivalEntAmb.setText(formatTime(hosp.getTimeFromArrivalToEntranceExamAmbulance().getMean()));
+        lArrivalMedical.setText(formatTime(hosp.getTimeFromArrivalToMedicalExam().getMean()));
+        lArrivalMedicalWalk.setText(formatTime(hosp.getTimeFromArrivalToMedicalExamWalk().getMean()));
+        lArrivalMedicalAmb.setText(formatTime(hosp.getTimeFromArrivalToMedicalExamAmbulance().getMean()));
 
         // --- Partitioned waiting times (WALK / AMBULANCE) ---
         lWaitEntWalk.setText(formatTime(hosp.getWaitEntranceWalk().getMean()));
@@ -337,12 +337,12 @@ public class StatisticsPanel extends JPanel {
         gAvgWaitMedical.setText(formatTime(sim.getWaitMedical().getMean()));
         gIsWaitMedical.setText(formatISTime(sim.getWaitMedical().getConfidenceInterval95()));
 
-        gArrivalEnt.setText(formatTime(sim.getArrivalToEntrance().getMean()));
-        gIsArrivalEnt.setText(formatISTime(sim.getArrivalToEntrance().getConfidenceInterval95()));
-        gArrivalEntWalk.setText(formatTime(sim.getArrivalToEntranceWalk().getMean()));
-        gIsArrivalEntWalk.setText(formatISTime(sim.getArrivalToEntranceWalk().getConfidenceInterval95()));
-        gArrivalEntAmb.setText(formatTime(sim.getArrivalToEntranceAmb().getMean()));
-        gIsArrivalEntAmb.setText(formatISTime(sim.getArrivalToEntranceAmb().getConfidenceInterval95()));
+        gArrivalMedical.setText(formatTime(sim.getArrivalToMedical().getMean()));
+        gIsArrivalMedical.setText(formatISTime(sim.getArrivalToMedical().getConfidenceInterval95()));
+        gArrivalMedicalWalk.setText(formatTime(sim.getArrivalToMedicalWalk().getMean()));
+        gIsArrivalMedicalWalk.setText(formatISTime(sim.getArrivalToMedicalWalk().getConfidenceInterval95()));
+        gArrivalMedicalAmb.setText(formatTime(sim.getArrivalToMedicalAmb().getMean()));
+        gIsArrivalMedicalAmb.setText(formatISTime(sim.getArrivalToMedicalAmb().getConfidenceInterval95()));
 
         // --- Global partitioned Entrance waiting ---
         gWaitEntWalk.setText(formatTime(sim.getWaitEntranceWalk().getMean()));

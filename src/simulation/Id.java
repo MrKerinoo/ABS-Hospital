@@ -24,6 +24,7 @@ public class Id extends OSPABA.IdList
 	public static final int processMovePersonnel = 1003;
 	public static final int processEntranceExam = 1004;
 	public static final int processMedicalExam = 1005;
+	public static final int schedulerWarmupFind = 1009;
 	public static final int processMoveEntrancePatient = 1006;
 	//meta! tag="end"
 }

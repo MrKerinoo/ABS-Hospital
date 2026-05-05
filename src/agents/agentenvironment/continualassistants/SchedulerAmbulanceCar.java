@@ -25,10 +25,8 @@ public class SchedulerAmbulanceCar extends OSPABA.Scheduler
 	{
         double nextArrival = myAgent().getPatientAmbulanceCarGenerator().randDouble();
 
-        if (mySim().currentTime() + nextArrival <= 2_419_200) {
-            message.setCode(Mc.finish);
-            hold(nextArrival, message);
-        }
+        message.setCode(Mc.finish);
+        hold(nextArrival, message);
 	}
 
 	//meta! userInfo="Process messages defined in code", id="0"
