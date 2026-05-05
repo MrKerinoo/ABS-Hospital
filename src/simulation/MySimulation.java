@@ -103,7 +103,7 @@ public class MySimulation extends OSPABA.Simulation
         ambulanceAUsage = new DiscreteStatistics();
         ambulanceBUsage = new DiscreteStatistics();
 
-        this.random = new Random(1);
+        this.random = new Random();
         wipData = new ArrayList<>();
 	}
 
@@ -131,8 +131,8 @@ public class MySimulation extends OSPABA.Simulation
         timeInSystemWalk.add(agentEnvironment().getTimeInSystemWalk().getMean());
         timeInSystemAmbulance.add(agentEnvironment().getTimeInSystemAmbulance().getMean());
 
-        entranceQueueLength.add(agentHospital().getEntranceQueueLength().getMean());
-        medicalQueueLength.add(agentHospital().getMedicalQueueLength().getMean());
+        entranceQueueLength.add(agentResources().getEntranceQueueLength().getMean());
+        medicalQueueLength.add(agentResources().getMedicalQueueLength().getMean());
         waitEntrance.add(agentHospital().getWaitEntrance().getMean());
         waitMedical.add(agentHospital().getWaitMedical().getMean());
         waitEntranceWalk.add(agentHospital().getWaitEntranceWalk().getMean());
@@ -160,7 +160,6 @@ public class MySimulation extends OSPABA.Simulation
 	@Override
 	public void simulationFinished()
 	{
-        System.out.println("KONIEC SIMULACIE");
         if (warmupFind) {
             this.exportWipToCSV();
         }

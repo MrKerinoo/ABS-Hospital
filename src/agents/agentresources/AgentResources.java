@@ -18,18 +18,19 @@ import java.util.Random;
 //meta! id="16"
 public class AgentResources extends OSPABA.Agent
 {
-    List<Nurse> freeNurses;
-    List<Doctor> freeDoctors;
-    List<Ambulance> freeAmbulancesA;
-    List<Ambulance> freeAmbulancesB;
+    private List<Nurse> freeNurses;
+    private List<Doctor> freeDoctors;
+    private List<Ambulance> freeAmbulancesA;
+    private List<Ambulance> freeAmbulancesB;
 
-    List<Nurse> allNurses;
-    List<Doctor> allDoctors;
-    List<Ambulance> allAmbulancesA;
-    List<Ambulance> allAmbulancesB;
+    private List<Nurse> allNurses;
+    private List<Doctor> allDoctors;
+    private List<Ambulance> allAmbulancesA;
+    private List<Ambulance> allAmbulancesB;
 
-    PriorityQueue<MessageForm> waitingAmbulanceARequests;
-    PriorityQueue<MessageForm> waitingAmbulanceBRequests;
+    private PriorityQueue<MyMessage> entranceRequests;
+    private PriorityQueue<MyMessage> medicalARequests;
+    private PriorityQueue<MyMessage> medicalBRequests;
 
     // GENERATORS
 
@@ -37,6 +38,9 @@ public class AgentResources extends OSPABA.Agent
     private TriangularGenerator ambulanceMoveGenerator;
 
     // STATISTICS
+
+    private TimeStatistics entranceQueueLength;
+    private TimeStatistics medicalQueueLength;
 
     // Priemerné vyťaženie lekárov
     private TimeStatistics doctorUsage;
@@ -69,13 +73,17 @@ public class AgentResources extends OSPABA.Agent
         allAmbulancesA = new ArrayList<>();
         allAmbulancesB = new ArrayList<>();
 
-        waitingAmbulanceARequests = new PriorityQueue<>(new ResourceComparator());
-        waitingAmbulanceBRequests = new PriorityQueue<>(new ResourceComparator());
+        entranceRequests = new PriorityQueue<>(new ResourceComparator());
+        medicalARequests = new PriorityQueue<>(new ResourceComparator());
+        medicalBRequests = new PriorityQueue<>(new ResourceComparator());
 
         Random seedRandom = ((MySimulation) mySim()).getSeedRandom();
 
         entranceAmbulanceMoveGenerator = new ContinuousGenerator(seedRandom, 90, 200);
         ambulanceMoveGenerator = new TriangularGenerator(seedRandom, 15, 45, 20);
+
+        entranceQueueLength = new TimeStatistics((MySimulation) mySim());
+        medicalQueueLength = new TimeStatistics((MySimulation) mySim());
 
         doctorUsage = new TimeStatistics((MySimulation) mySim());
         nurseUsage = new TimeStatistics((MySimulation) mySim());
@@ -146,6 +154,8 @@ public class AgentResources extends OSPABA.Agent
 	//meta! tag="end"
 
     public void resetLocalStats() {
+        this.entranceQueueLength.reset();
+        this.medicalQueueLength.reset();
         this.doctorUsage.reset();
         this.nurseUsage.reset();
         this.ambulanceAUsage.reset();
@@ -184,12 +194,16 @@ public class AgentResources extends OSPABA.Agent
         return allAmbulancesB;
     }
 
-    public PriorityQueue<MessageForm> getWaitingAmbulanceARequests() {
-        return waitingAmbulanceARequests;
+    public PriorityQueue<MyMessage> getEntranceRequests() {
+        return entranceRequests;
     }
 
-    public PriorityQueue<MessageForm> getWaitingAmbulanceBRequests() {
-        return waitingAmbulanceBRequests;
+    public PriorityQueue<MyMessage> getMedicalARequests() {
+        return medicalARequests;
+    }
+
+    public PriorityQueue<MyMessage> getMedicalBRequests() {
+        return medicalBRequests;
     }
 
     public ContinuousGenerator getEntranceAmbulanceMoveGenerator() {
@@ -198,6 +212,14 @@ public class AgentResources extends OSPABA.Agent
 
     public TriangularGenerator getAmbulanceMoveGenerator() {
         return ambulanceMoveGenerator;
+    }
+
+    public TimeStatistics getEntranceQueueLength() {
+        return entranceQueueLength;
+    }
+
+    public TimeStatistics getMedicalQueueLength() {
+        return medicalQueueLength;
     }
 
     public TimeStatistics getDoctorUsage() {
@@ -218,9 +240,6 @@ public class AgentResources extends OSPABA.Agent
 
     public void recordDoctorUsage() {
         double val = (double)(allDoctors.size() - freeDoctors.size()) / allDoctors.size();
-//        if (val < 0) {
-//            System.out.println("ZÁPORNÉ VYŤAŽENIE! Voľných: " + freeDoctors.size() + " z " + allDoctors.size());
-//        }
         doctorUsage.add(val);
     }
 

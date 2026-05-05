@@ -64,29 +64,9 @@ public class ManagerHospital extends OSPABA.Manager
 
         msg.getPatient().setMedicalQueueArrivalTime(mySim().currentTime());
 
-        switch (patient.getPriority()) {
-            case 1, 2:
-                myAgent().getMedicalTypeAQueue().add(msg);
-                break;
-            case 3, 4:
-                myAgent().getMedicalTypeAQueue().add(msg);
-                myAgent().getMedicalTypeBQueue().add(msg);
-                break;
-            case 5:
-                myAgent().getMedicalTypeBQueue().add(msg);
-                break;
-        }
-
-        myAgent().incrementMedicalQueue();
-
         MyMessage copyMessage = (MyMessage) msg.createCopy();
         copyMessage.setCode(Mc.releaseEntranceResources);
         copyMessage.setAddressee(mySim().findAgent(Id.agentResources));
-
-        if (!mySim().isMaxSpeed()) {
-            ((MySimulation) mySim()).logEvent(" | Uvoľnenie zdrojov po vstupnom vyšetrení | " + msg.getPatient());
-            System.out.println(mySim().currentTime() + " | Uvoľnenie zdrojov po vstupnom vyšetrení | " + msg.getPatient());
-        }
 
         notice(copyMessage);
 
@@ -96,11 +76,6 @@ public class ManagerHospital extends OSPABA.Manager
 
         msg.setCode(Mc.requestMedicalResources);
         msg.setAddressee(mySim().findAgent(Id.agentResources));
-
-        if (!mySim().isMaxSpeed()) {
-            ((MySimulation) mySim()).logEvent(" | Požiadanie o zdroje lekárskeho vyšetrenia | " + msg.getPatient());
-            System.out.println(mySim().currentTime() + " | Požiadanie o zdroje lekárskeho vyšetrenia | " + msg.getPatient());
-        }
 
         request(msg);
     }
@@ -130,10 +105,7 @@ public class ManagerHospital extends OSPABA.Manager
     {
         MyMessage msg = (MyMessage) message;
 
-        myAgent().getEntranceQueue().remove(msg);
         double waitTime = mySim().currentTime() - msg.getPatient().getEntranceQueueArrivalTime();
-
-        myAgent().getEntranceQueueLength().add(myAgent().getEntranceQueue().size());
         myAgent().getWaitEntrance().add(waitTime);
 
         if (msg.getPatient().isWithAmbulance()) {
@@ -142,15 +114,8 @@ public class ManagerHospital extends OSPABA.Manager
             myAgent().getWaitEntranceWalk().add(waitTime);
         }
 
-        if (!mySim().isMaxSpeed()) {
-            ((MySimulation) mySim()).logEvent(" | Pacient vstupuje do ambulancie |" + msg.getPatient());
-            System.out.println(mySim().currentTime() + " | Pacient vstupuje do ambulancie |" + msg.getPatient());
-        }
-
         Patient patient = msg.getPatient();
         Ambulance ambulance = msg.getAmbulance();
-
-        msg.getAmbulance().setPatient(patient);
 
         patient.setVisitedAmbulance(ambulance);
 
@@ -176,40 +141,25 @@ public class ManagerHospital extends OSPABA.Manager
         Patient patient = msg.getPatient();
         Ambulance ambulance = msg.getAmbulance();
 
-        myAgent().getMedicalTypeAQueue().remove(msg);
-        myAgent().getMedicalTypeBQueue().remove(msg);
-
         double waitTime = mySim().currentTime() - patient.getMedicalQueueArrivalTime();
 
-        myAgent().decrementMedicalQueue();
         myAgent().getWaitMedical().add(waitTime);
 
         double entranceTime = mySim().currentTime() - msg.getPatient().getArrivalTime();
-
         myAgent().getTimeFromArrivalToMedicalExam().add(entranceTime);
 
         if (patient.isWithAmbulance()) {
             myAgent().getWaitMedicalAmbulance().add(waitTime);
             myAgent().getTimeFromArrivalToMedicalExamAmbulance().add(entranceTime);
-
         } else {
             myAgent().getWaitMedicalWalk().add(waitTime);
             myAgent().getTimeFromArrivalToMedicalExamWalk().add(entranceTime);
-
         }
-
-        msg.getAmbulance().setPatient(patient);
 
         if (ambulance != patient.getVisitedAmbulance()) {
             msg.setAddressee(myAgent().findAssistant(Id.processMoveAmbulancePatient));
-
             startContinualAssistant(msg);
         } else {
-            if (!mySim().isMaxSpeed()) {
-                ((MySimulation) mySim()).logEvent(" | Pacient vstupuje do ambulancie |" + msg.getPatient());
-                System.out.println(mySim().currentTime() + " | Pacient vstupuje do ambulancie |" + msg.getPatient());
-            }
-
             if (mySim().animatorExists()) {
                 Utils.moveAlongPath(patient, 2, mySim().currentTime(),
                         Utils.p2d(ambulance.getXDoor(), ambulance.getYDoor()),
@@ -220,7 +170,6 @@ public class ManagerHospital extends OSPABA.Manager
 
             msg.setCode(Mc.medicalExamination);
             msg.setAddressee(mySim().findAgent(Id.agentMedicalExam));
-
             request(msg);
         }
     }
@@ -229,20 +178,10 @@ public class ManagerHospital extends OSPABA.Manager
 	public void processFinishProcessMoveEntrancePatient(MessageForm message)
 	{
         MyMessage msg = (MyMessage) message;
-
         msg.getPatient().setEntranceQueueArrivalTime(mySim().currentTime());
-
-        myAgent().getEntranceQueue().add(msg);
-
-        myAgent().getEntranceQueueLength().add(myAgent().getEntranceQueue().size());
 
         msg.setCode(Mc.requestEntranceResources);
         msg.setAddressee(mySim().findAgent(Id.agentResources));
-
-        if (!mySim().isMaxSpeed()) {
-            ((MySimulation) mySim()).logEvent(" | Požiadanie o zdroje vstupného vyšetrenia| " + msg.getPatient());
-            System.out.println(mySim().currentTime() + " | Požiadanie o zdroje vstupného vyšetrenia| " + msg.getPatient());
-        }
 
         request(msg);
 	}
@@ -251,11 +190,6 @@ public class ManagerHospital extends OSPABA.Manager
 	public void processFinishProcessMoveAmbulancePatient(MessageForm message)
     {
         MyMessage msg = (MyMessage) message;
-
-        if (!mySim().isMaxSpeed()) {
-            ((MySimulation) mySim()).logEvent(" | Pacient vstupuje do ambulancie |" + msg.getPatient());
-            System.out.println(mySim().currentTime() + " | Pacient vstupuje do ambulancie |" + msg.getPatient());
-        }
 
         msg.setCode(Mc.medicalExamination);
         msg.setAddressee(mySim().findAgent(Id.agentMedicalExam));
@@ -339,5 +273,4 @@ public class ManagerHospital extends OSPABA.Manager
 	{
 		return (AgentHospital)super.myAgent();
 	}
-
 }

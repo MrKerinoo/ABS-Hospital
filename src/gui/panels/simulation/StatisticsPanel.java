@@ -285,8 +285,8 @@ public class StatisticsPanel extends JPanel {
         lAvgTimeInSystem.setText(formatTime(env.getTimeInSystem().getMean()));
 
         // --- Queue lengths ---
-        lAvgQueueEntrance.setText(formatNum(hosp.getEntranceQueueLength().getMean()));
-        lAvgQueueMedical.setText(formatNum(hosp.getMedicalQueueLength().getMean()));
+        lAvgQueueEntrance.setText(formatNum(res.getEntranceQueueLength().getMean()));
+        lAvgQueueMedical.setText(formatNum(res.getMedicalQueueLength().getMean()));
 
         // --- Generic waiting times ---
         lAvgWaitEntrance.setText(formatTime(hosp.getWaitEntrance().getMean()));

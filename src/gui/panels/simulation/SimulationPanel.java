@@ -154,11 +154,11 @@ public class SimulationPanel extends JPanel implements ISimDelegate {
 
             // --- Update Queues ---
             entranceQueuePanel.refresh(
-                    core.agentHospital().getEntranceQueue(),
+                    core.agentResources().getEntranceRequests(),
                     new ResourceComparator()
             );
             medicalQueuePanel.refresh(
-                    core.agentHospital().getMedicalTypeBQueue(),
+                    core.agentResources().getMedicalBRequests(),
                     new ResourceComparator()
             );
 

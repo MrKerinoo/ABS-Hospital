@@ -14,10 +14,6 @@ import java.util.Random;
 //meta! id="13"
 public class AgentHospital extends OSPABA.Agent
 {
-    private PriorityQueue<MyMessage> entranceQueue;
-    private PriorityQueue<MyMessage> medicalTypeAQueue;
-    private PriorityQueue<MyMessage> medicalTypeBQueue;
-
     // GENERATORS
 
     private TriangularGenerator walkEntranceMoveGenerator;
@@ -29,16 +25,8 @@ public class AgentHospital extends OSPABA.Agent
 
     // STATISTICS
 
-    // Priemerná dĺžka radu na vstupné vyšetrenie
-    private TimeStatistics entranceQueueLength;
-    // Priemerná dĺžka radu na lekárske vyšetrenie
-    private TimeStatistics medicalQueueLength;
-    // Priemerný čas čakania v rade na vstupné vyšetrenie
     private DiscreteStatistics waitEntrance;
-    // Priemerný čas čakania v rade na lekárske vyšetrenie
     private DiscreteStatistics waitMedical;
-    // Aktuálny počet pacientov čakajúcich na lekárske vyšetrenie
-    private int medicalQueueSize;
 
     private DiscreteStatistics waitEntranceWalk;
     private DiscreteStatistics waitEntranceAmbulance;
@@ -61,10 +49,6 @@ public class AgentHospital extends OSPABA.Agent
 		super.prepareReplication();
 		// Setup component for the next replication
 
-        entranceQueue = new PriorityQueue<>(new ResourceComparator());
-        medicalTypeAQueue = new PriorityQueue<>(new ResourceComparator());
-        medicalTypeBQueue = new PriorityQueue<>(new ResourceComparator());
-
         Random seedRandom = ((MySimulation) mySim()).getSeedRandom();
 
         walkEntranceMoveGenerator = new TriangularGenerator(seedRandom, 120, 300, 150);
@@ -75,21 +59,16 @@ public class AgentHospital extends OSPABA.Agent
         randomXWaitingRoomGenerator = new ContinuousGenerator(seedRandom, 491, 1200);
         randomYWaitingRoomGenerator = new ContinuousGenerator(seedRandom,445, 620);
 
-        entranceQueueLength = new TimeStatistics((MySimulation) mySim());
-        medicalQueueLength = new TimeStatistics((MySimulation) mySim());
-
         waitEntrance = new DiscreteStatistics();
         waitMedical = new DiscreteStatistics();
-        waitEntranceWalk = new DiscreteStatistics();;
-        waitEntranceAmbulance = new DiscreteStatistics();;
-        waitMedicalWalk = new DiscreteStatistics();;
-        waitMedicalAmbulance = new DiscreteStatistics();;
+        waitEntranceWalk = new DiscreteStatistics();
+        waitEntranceAmbulance = new DiscreteStatistics();
+        waitMedicalWalk = new DiscreteStatistics();
+        waitMedicalAmbulance = new DiscreteStatistics();
 
         timeFromArrivalToMedicalExam = new DiscreteStatistics();
         timeFromArrivalToMedicalExamWalk = new DiscreteStatistics();
         timeFromArrivalToMedicalExamAmbulance = new DiscreteStatistics();
-
-        this.medicalQueueSize = 0;
     }
 
 	//meta! userInfo="Generated code: do not modify", tag="begin"
@@ -108,9 +87,6 @@ public class AgentHospital extends OSPABA.Agent
 	//meta! tag="end"
 
     public void resetLocalStats() {
-        this.entranceQueueLength.reset();
-        this.medicalQueueLength.reset();
-
         this.waitEntrance.reset();
         this.waitMedical.reset();
         this.waitEntranceWalk.reset();
@@ -121,20 +97,6 @@ public class AgentHospital extends OSPABA.Agent
         this.timeFromArrivalToMedicalExam.reset();
         this.timeFromArrivalToMedicalExamWalk.reset();
         this.timeFromArrivalToMedicalExamAmbulance.reset();
-
-        this.medicalQueueSize = 0;
-    }
-
-    public PriorityQueue<MyMessage> getEntranceQueue() {
-        return entranceQueue;
-    }
-
-    public PriorityQueue<MyMessage> getMedicalTypeAQueue() {
-        return medicalTypeAQueue;
-    }
-
-    public PriorityQueue<MyMessage> getMedicalTypeBQueue() {
-        return medicalTypeBQueue;
     }
 
     public ContinuousGenerator getRandomXWaitingRoomGenerator() {
@@ -155,14 +117,6 @@ public class AgentHospital extends OSPABA.Agent
 
     public TriangularGenerator getAmbulanceMoveGenerator() {
         return ambulanceMoveGenerator;
-    }
-
-    public TimeStatistics getEntranceQueueLength() {
-        return entranceQueueLength;
-    }
-
-    public TimeStatistics getMedicalQueueLength() {
-        return medicalQueueLength;
     }
 
     public DiscreteStatistics getWaitEntrance() {
@@ -203,15 +157,5 @@ public class AgentHospital extends OSPABA.Agent
 
     public DiscreteStatistics getTimeFromArrivalToMedicalExamAmbulance() {
         return timeFromArrivalToMedicalExamAmbulance;
-    }
-
-    public void incrementMedicalQueue() {
-        medicalQueueSize++;
-        medicalQueueLength.add(medicalQueueSize);
-    }
-
-    public void decrementMedicalQueue() {
-        medicalQueueSize--;
-        medicalQueueLength.add(medicalQueueSize);
     }
 }
